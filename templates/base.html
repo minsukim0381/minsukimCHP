@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Precision Control Robotics{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBDJE9CoS_N8fdtqgHYwDMWPGkFuCIj5zo",
+            authDomain: "minsukim-database-72105.firebaseapp.com",
+            projectId: "minsukim-database-72105",
+            storageBucket: "minsukim-database-72105.firebasestorage.app",
+            messagingSenderId: "532092657612",
+            appId: "1:532092657612:web:a2f8cfb62deb71ce6d4769",
+            measurementId: "G-EZ9Z5RVM9J"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+    </script>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo" onclick="location.href='/'">PRECISION<span>ROBOTICS</span></div>
+                <ul class="nav-links">
+                    <li><a href="/products">Products</a></li>
+                    <li><a href="/tech">Tech Support</a></li>
+                    <li><a href="/board">Community</a></li>
+                    <li><a href="/about">About</a></li>
+                </ul>
+                <button class="btn-cyber" onclick="location.href='/contact'">Contact</button>
+            </nav>
+        </div>
+    </header>
+
+    <main id="app-root">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="container" style="padding: 40px 0; border-top: 1px solid var(--border-color); margin-top: 60px; color: var(--gray-mid); font-size: 0.8rem;">
+            &copy; 2026 Precision Control Robotics. All rights reserved. Powered by Antigravity.
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

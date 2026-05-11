@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}News & Community | Precision Control Robotics{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 100px 0;">
+    <div class="board-header">
+        <h1 style="font-size: 3rem; font-weight: 800;">News & Community</h1>
+        <button class="btn-cyber" onclick="location.href='/write'">Create Post</button>
+    </div>
+
+    <div class="category-tabs">
+        <a href="/board" class="tab active" id="tab-all">All</a>
+        <a href="javascript:void(0)" onclick="loadPosts('notice')" class="tab" id="tab-notice">Notice</a>
+        <a href="javascript:void(0)" onclick="loadPosts('tech')" class="tab" id="tab-tech">Tech Blog</a>
+        <a href="javascript:void(0)" onclick="loadPosts('qna')" class="tab" id="tab-qna">Q&A</a>
+    </div>
+
+    <table class="post-table">
+        <thead>
+            <tr style="text-align: left; color: var(--gray-mid); font-size: 0.8rem; text-transform: uppercase;">
+                <th style="padding: 1rem;">Title</th>
+                <th style="padding: 1rem;">Author</th>
+                <th style="padding: 1rem;">Date</th>
+                <th style="padding: 1rem;">Views</th>
+            </tr>
+        </thead>
+        <tbody id="posts-body">
+            <!-- Posts will be loaded here via Firebase -->
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    async function loadPosts(category = '') {
+        const postsBody = document.getElementById('posts-body');
+        postsBody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 2rem;">Loading posts...</td></tr>';
+        
+        // Update active tab
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        if (!category) document.getElementById('tab-all').classList.add('active');
+        else document.getElementById('tab-' + category).classList.add('active');
+
+        let query = db.collection('posts').orderBy('date_posted', 'desc');
+        if (category) {
+            query = query.where('category', '==', category);
+        }
+
+        try {
+            const snapshot = await query.get();
+            postsBody.innerHTML = '';
+            
+            if (snapshot.empty) {
+                postsBody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 2rem;">No posts found.</td></tr>';
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                const post = doc.data();
+                const date = post.date_posted.toDate().toLocaleDateString();
+                const row = `
+                    <tr class="post-row" onclick="location.href='/post/${doc.id}'">
+                        <td style="padding: 1.5rem 1rem;">
+                            <div style="font-weight: 600;">${post.title}</div>
+                            <div style="font-size: 0.7rem; color: var(--gray-mid); margin-top: 4px;">#${post.category.toUpperCase()}</div>
+                        </td>
+                        <td>${post.author || 'Admin'}</td>
+                        <td>${date}</td>
+                        <td>${post.views || 0}</td>
+                    </tr>
+                `;
+                postsBody.innerHTML += row;
+            });
+        } catch (error) {
+            console.error("Error loading posts:", error);
+            postsBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:red; padding: 2rem;">Error loading posts. Please check Firebase rules.</td></tr>';
+        }
+    }
+
+    // Initial load
+    window.onload = () => loadPosts();
+</script>
+{% endblock %}

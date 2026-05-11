@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Precision Control Robotics | 홈{% endblock %}
+
+{% block content %}
+<section class="hero-full" style="background-image: url('/static/img/hero_main.png');">
+    <div class="hero-overlay">
+        <h1>Precision Beyond<br>Imagination</h1>
+        <p>인간과 로봇이 공존하는 정밀 제어 공정의 새로운 표준을 제시합니다.</p>
+        <button class="btn-cyber" onclick="location.href='/products'">Explore Technology</button>
+    </div>
+</section>
+
+<section class="product-section">
+    <div class="container">
+        <h2 class="section-title">Innovative Product Lineup</h2>
+        <div class="product-grid">
+            <div class="product-card">
+                <img src="/static/img/products_main.png" alt="Product 1">
+            </div>
+            <div class="product-card">
+                <h3 style="font-size: 2rem; margin-bottom: 1rem;">Collaborative Robots</h3>
+                <p style="color: var(--gray-mid); margin-bottom: 2rem;">당사의 협동 로봇은 고도의 정밀도와 안전성을 결합하여 제조 공정의 효율을 극대화합니다. 0.01mm의 반복 정밀도를 보장하는 X-시리즈를 만나보세요.</p>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; color: var(--gray-mid);">
+                    <li>• 고정밀 6축 다관절 제어</li>
+                    <li>• 지능형 충돌 감지 및 안전 로직</li>
+                    <li>• C# 및 Python 통합 API 지원</li>
+                </ul>
+                <button class="btn-cyber" style="margin-top: 2rem; background: transparent; border: 1px solid white;" onclick="location.href='/products'">View Details</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="news-section">
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem;">
+            <h2 style="font-size: 2.5rem; font-weight: 700; margin: 0;">Latest News</h2>
+            <a href="/board" style="color: var(--accent-blue); font-weight: 600; text-decoration: none;">View All News →</a>
+        </div>
+        <div class="news-grid" id="latest-news-grid">
+            <!-- Loading indicator -->
+            <p>Loading news...</p>
+        </div>
+    </div>
+</section>
+
+<section class="container" style="padding: 100px 0; border-top: 1px solid var(--border-color);">
+    <div style="max-width: 800px;">
+        <h3 style="font-size: 1.5rem; margin-bottom: 1.5rem;">About Precision Robotics</h3>
+        <p style="color: var(--gray-mid); font-size: 1.1rem; line-height: 1.8;">
+            Precision Control Robotics는 글로벌 최고 수준의 로봇 하드웨어 및 소프트웨어 기술을 보유한 전문 기업입니다. 
+            단순한 자동화를 넘어, 인공지능과 정밀 제어 기술의 융합을 통해 산업 현장의 혁신을 이끌어가고 있습니다.
+        </p>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    async function loadLatestNews() {
+        const grid = document.getElementById('latest-news-grid');
+        try {
+            const snapshot = await db.collection('posts')
+                .where('category', '==', 'notice')
+                .orderBy('date_posted', 'desc')
+                .limit(3)
+                .get();
+            
+            grid.innerHTML = '';
+            if (snapshot.empty) {
+                grid.innerHTML = '<p>준비된 뉴스가 없습니다.</p>';
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                const item = doc.data();
+                const date = item.date_posted.toDate().toLocaleDateString();
+                grid.innerHTML += `
+                    <div class="news-item" onclick="location.href='/post/${doc.id}'">
+                        <div class="news-date">${date}</div>
+                        <div class="news-title">${item.title}</div>
+                    </div>
+                `;
+            });
+        } catch (error) {
+            console.error("Error loading news:", error);
+            grid.innerHTML = '<p>뉴스를 불러오는 중 오류가 발생했습니다.</p>';
+        }
+    }
+    window.onload = loadLatestNews;
+</script>
+{% endblock %}

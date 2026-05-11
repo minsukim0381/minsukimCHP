@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Post Detail | Precision Control Robotics{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 100px 0; max-width: 800px;">
+    <a href="/board" style="text-decoration: none; color: var(--accent-blue); font-weight: 600; margin-bottom: 2rem; display: inline-block;">← Back to List</a>
+    
+    <div id="loading-spinner" style="text-align: center; padding: 4rem;">Loading post...</div>
+    
+    <div id="post-container" style="display: none;">
+        <h1 id="post-title" style="font-size: 3rem; font-weight: 800; margin-bottom: 1.5rem;"></h1>
+        
+        <div style="display: flex; gap: 1rem; color: var(--gray-mid); margin-bottom: 3rem; font-size: 0.9rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+            <span id="post-author"></span>
+            <span>|</span>
+            <span id="post-date"></span>
+            <span>|</span>
+            <span>Views: <span id="post-views"></span></span>
+        </div>
+
+        <div id="post-content-body" style="font-size: 1.15rem; line-height: 1.8; margin-bottom: 60px;"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const postId = "{{ post_id }}";
+
+    async function loadPostDetail() {
+        try {
+            const docRef = db.collection('posts').doc(postId);
+            const doc = await docRef.get();
+            
+            if (!doc.exists) {
+                document.getElementById('loading-spinner').innerHTML = 'Post not found.';
+                return;
+            }
+
+            const post = doc.data();
+            document.getElementById('post-title').innerText = post.title;
+            document.getElementById('post-author').innerText = post.author || 'Admin';
+            document.getElementById('post-date').innerText = post.date_posted.toDate().toLocaleString();
+            document.getElementById('post-views').innerText = (post.views || 0) + 1;
+            
+            const contentBody = document.getElementById('post-content-body');
+            contentBody.innerHTML = marked.parse(post.content);
+            
+            document.getElementById('loading-spinner').style.display = 'none';
+            document.getElementById('post-container').style.display = 'block';
+
+            // Increment views in background
+            docRef.update({
+                views: firebase.firestore.FieldValue.increment(1)
+            });
+
+        } catch (error) {
+            console.error("Error loading post:", error);
+            document.getElementById('loading-spinner').innerHTML = 'Error loading post. Please check console.';
+        }
+    }
+
+    loadPostDetail();
+</script>
+{% endblock %}

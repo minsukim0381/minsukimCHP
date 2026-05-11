@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Tech Support | Precision Control Robotics{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 100px 0;">
+    <h1 style="font-size: 3.5rem; font-weight: 800; margin-bottom: 2rem;">Tech Support</h1>
+    <p style="font-size: 1.2rem; color: var(--gray-mid); margin-bottom: 4rem; max-width: 800px;">
+        로봇 시스템의 통합 및 개발을 위한 기술 문서를 제공합니다. 
+        Python, C#, C++ 등 다양한 개발 환경을 지원하는 API 레퍼런스를 확인하세요.
+    </p>
+
+    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 4rem;">
+        <div>
+            <div style="border-left: 2px solid var(--accent-blue); padding-left: 2rem; display: flex; flex-direction: column; gap: 2rem;">
+                <div>
+                    <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Documentation</h3>
+                    <ul style="list-style: none; color: var(--gray-mid); font-size: 0.95rem;">
+                        <li style="margin-bottom: 0.5rem; cursor: pointer; color: var(--accent-blue);">Python API Guide</li>
+                        <li style="margin-bottom: 0.5rem; cursor: pointer;">C# Integration Manual</li>
+                        <li style="margin-bottom: 0.5rem; cursor: pointer;">PLC Communication Spec</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Downloads</h3>
+                    <ul style="list-style: none; color: var(--gray-mid); font-size: 0.95rem;">
+                        <li style="margin-bottom: 0.5rem; cursor: pointer;">SDK v2.5.0</li>
+                        <li style="margin-bottom: 0.5rem; cursor: pointer;">Robot CAD Data</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div style="background: var(--gray-dark); padding: 3rem; border-radius: 8px; color: white;">
+                <h3 style="font-family: 'JetBrains Mono', monospace; margin-bottom: 2rem; color: var(--accent-blue);">Python Quick Start</h3>
+                <pre style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; line-height: 1.6; color: #a9b7c6;">
+import robot_api
+
+# Connect to the robot
+rb = robot_api.connect("192.168.0.10")
+
+# Initialize motion profile
+rb.set_speed(50)
+rb.set_acceleration(20)
+
+# Move to target position (x, y, z, rx, ry, rz)
+rb.move_to([100, 200, 50, 0, 180, 0])
+
+# Close connection
+rb.disconnect()
+                </pre>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

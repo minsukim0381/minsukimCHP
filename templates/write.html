@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Create Post | Precision Control Robotics{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 100px 0; max-width: 800px;">
+    <h1 style="font-size: 3rem; font-weight: 800; margin-bottom: 2rem;">Create New Post</h1>
+    
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <div>
+            <label style="display: block; font-weight: 700; margin-bottom: 0.5rem;">Title</label>
+            <input type="text" id="post-title" style="width: 100%; padding: 1rem; border: 1px solid var(--border-color); border-radius: 4px;" placeholder="Enter post title">
+        </div>
+        
+        <div>
+            <label style="display: block; font-weight: 700; margin-bottom: 0.5rem;">Category</label>
+            <select id="post-category" style="width: 100%; padding: 1rem; border: 1px solid var(--border-color); border-radius: 4px;">
+                <option value="notice">Notice</option>
+                <option value="tech">Tech Blog</option>
+                <option value="qna">Q&A</option>
+            </select>
+        </div>
+
+        <div>
+            <label style="display: block; font-weight: 700; margin-bottom: 0.5rem;">Content (Markdown supported)</label>
+            <textarea id="post-content" style="width: 100%; height: 400px; padding: 1rem; border: 1px solid var(--border-color); border-radius: 4px; font-family: inherit;" placeholder="Write your content here..."></textarea>
+        </div>
+
+        <button class="btn-cyber" id="submit-btn" onclick="submitPost()">Publish Post</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    async function submitPost() {
+        const title = document.getElementById('post-title').value;
+        const category = document.getElementById('post-category').value;
+        const content = document.getElementById('post-content').value;
+        const btn = document.getElementById('submit-btn');
+
+        if (!title || !content) {
+            alert('Please fill in both title and content.');
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerText = 'Publishing...';
+
+        try {
+            await db.collection('posts').add({
+                title,
+                category,
+                content,
+                author: 'Admin',
+                date_posted: firebase.firestore.Timestamp.now(),
+                views: 0
+            });
+            alert('Post published successfully!');
+            location.href = '/board';
+        } catch (error) {
+            console.error("Error publishing post:", error);
+            alert('Error publishing post: ' + error.message);
+            btn.disabled = false;
+            btn.innerText = 'Publish Post';
+        }
+    }
+</script>
+{% endblock %}
