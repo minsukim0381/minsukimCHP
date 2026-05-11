@@ -78,6 +78,12 @@ const translations = {
         "about-hero-desc": "Precision Control Robotics는 로봇 원천 기술을 바탕으로 인간과 로봇이 안전하게 공존하는 미래를 만들어갑니다.",
         "about-vision": "기업 비전",
         "about-vision-desc": "우리는 단순한 기계를 만드는 것을 넘어, 인간의 가능성을 확장하는 도구를 연구합니다. 세계 최고 수준의 정밀 제어 알고리즘과 하드웨어 설계 기술을 통해 대한민국을 넘어 글로벌 로봇 시장의 표준을 선도하겠습니다.",
+        "search-type-all": "제목+내용",
+        "search-type-title": "제목만",
+        "search-type-content": "내용만",
+        "search-type-author": "작성자",
+        "search-placeholder": "검색어를 입력하세요",
+        "btn-search": "검색",
         "lang-toggle": "English"
     },
     en: {
@@ -159,6 +165,12 @@ const translations = {
         "about-hero-desc": "Precision Control Robotics creates a future where humans and robots safely coexist based on original robot technology.",
         "about-vision": "Corporate Vision",
         "about-vision-desc": "Beyond making simple machines, we research tools that expand human potential. We will lead the standards of the global robot market through world-class precision control algorithms.",
+        "search-type-all": "Title+Content",
+        "search-type-title": "Title Only",
+        "search-type-content": "Content Only",
+        "search-type-author": "Author",
+        "search-placeholder": "Enter search keyword",
+        "btn-search": "Search",
         "lang-toggle": "한국어"
     }
 };

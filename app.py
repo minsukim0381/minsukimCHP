@@ -85,10 +85,25 @@ with app.app_context():
 @app.route('/api/posts', methods=['GET'])
 def get_posts():
     category = request.args.get('category')
+    search_type = request.args.get('search_type', 'all')
+    search_query = request.args.get('search_query')
+    
+    query = Post.query
+    
     if category:
-        posts = Post.query.filter_by(category=category).order_by(Post.date_posted.desc()).all()
-    else:
-        posts = Post.query.order_by(Post.date_posted.desc()).all()
+        query = query.filter_by(category=category)
+    
+    if search_query:
+        if search_type == 'title':
+            query = query.filter(Post.title.ilike(f'%{search_query}%'))
+        elif search_type == 'content':
+            query = query.filter(Post.content.ilike(f'%{search_query}%'))
+        elif search_type == 'author':
+            query = query.filter(Post.author.ilike(f'%{search_query}%'))
+        else: # all (title + content)
+            query = query.filter((Post.title.ilike(f'%{search_query}%')) | (Post.content.ilike(f'%{search_query}%')))
+            
+    posts = query.order_by(Post.date_posted.desc()).all()
     return jsonify([post.to_dict() for post in posts])
 
 @app.route('/api/posts/<int:id>', methods=['GET'])

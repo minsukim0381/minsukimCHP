@@ -17,13 +17,25 @@
         <a href="javascript:void(0)" onclick="loadPosts('qna')" class="tab" id="tab-qna" data-i18n="tab-qna">Q&A</a>
     </div>
 
-    <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
-        <select id="sort-selector" onchange="loadPosts(currentCategory)" style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-color); color: var(--text-color); font-size: 0.8rem;">
-            <option value="latest" data-i18n="sort-latest">최신순</option>
-            <option value="oldest" data-i18n="sort-oldest">오래된 순</option>
-            <option value="views" data-i18n="sort-views">조회순</option>
-            <option value="likes" data-i18n="sort-likes">추천순</option>
-        </select>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 1rem; flex-wrap: wrap;">
+        <div style="display: flex; gap: 0.5rem; flex-grow: 1; max-width: 600px;">
+            <select id="search-type" style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-color); color: var(--text-color); font-size: 0.8rem; min-width: 120px;">
+                <option value="all" data-i18n="search-type-all">제목+내용</option>
+                <option value="title" data-i18n="search-type-title">제목만</option>
+                <option value="content" data-i18n="search-type-content">내용만</option>
+                <option value="author" data-i18n="search-type-author">작성자</option>
+            </select>
+            <input type="text" id="search-input" data-i18n="search-placeholder" placeholder="검색어를 입력하세요" style="flex-grow: 1; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-color); color: var(--text-color); font-size: 0.8rem;">
+            <button class="btn-cyber" onclick="loadPosts()" style="padding: 0.5rem 1.5rem; font-size: 0.8rem;" data-i18n="btn-search">검색</button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <select id="sort-selector" onchange="loadPosts(currentCategory)" style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-color); color: var(--text-color); font-size: 0.8rem;">
+                <option value="latest" data-i18n="sort-latest">최신순</option>
+                <option value="oldest" data-i18n="sort-oldest">오래된 순</option>
+                <option value="views" data-i18n="sort-views">조회순</option>
+                <option value="likes" data-i18n="sort-likes">추천순</option>
+            </select>
+        </div>
     </div>
 
     <table class="post-table">
@@ -52,6 +64,8 @@
         const currentLang = localStorage.getItem('preferred_lang') || 'ko';
         const dict = translations[currentLang];
         const sortBy = document.getElementById('sort-selector').value;
+        const searchType = document.getElementById('search-type').value;
+        const searchQuery = document.getElementById('search-input').value.toLowerCase().trim();
 
         postsBody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 2rem;">${dict['loading']}</td></tr>`;
         
@@ -73,6 +87,26 @@
                 posts.push({ id: doc.id, ...data });
             });
 
+            // Filter posts based on search query
+            if (searchQuery) {
+                posts = posts.filter(post => {
+                    const title = (post.title || '').toLowerCase();
+                    const content = (post.content || '').toLowerCase();
+                    const author = (post.author || '').toLowerCase();
+
+                    if (searchType === 'all') {
+                        return title.includes(searchQuery) || content.includes(searchQuery);
+                    } else if (searchType === 'title') {
+                        return title.includes(searchQuery);
+                    } else if (searchType === 'content') {
+                        return content.includes(searchQuery);
+                    } else if (searchType === 'author') {
+                        return author.includes(searchQuery);
+                    }
+                    return true;
+                });
+            }
+
             // Client-side sorting to avoid Firestore index requirements
             posts.sort((a, b) => {
                 if (sortBy === 'latest') return b.date_posted.toDate() - a.date_posted.toDate();
@@ -89,7 +123,7 @@
             postsBody.innerHTML = '';
             
             if (posts.length === 0) {
-                const noPostsText = currentLang === 'ko' ? '등록된 게시글이 없습니다.' : 'No posts found.';
+                const noPostsText = currentLang === 'ko' ? '검색 결과가 없거나 등록된 게시글이 없습니다.' : 'No posts found.';
                 postsBody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 2rem;">${noPostsText}</td></tr>`;
                 return;
             }
@@ -114,6 +148,18 @@
             postsBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:red; padding: 2rem;">${dict['loading']} (Error: ${error.message})</td></tr>`;
         }
     }
+
+    // Add event listener for Enter key on search input
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) {
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    loadPosts();
+                }
+            });
+        }
+    });
 
     // Initial load
     window.onload = () => loadPosts();
