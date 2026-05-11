@@ -8,6 +8,11 @@
     
     <div style="display: flex; flex-direction: column; gap: 1.5rem;">
         <div>
+            <label style="display: block; font-weight: 700; margin-bottom: 0.5rem;">Author Name</label>
+            <input type="text" id="post-author-input" style="width: 100%; padding: 1rem; border: 1px solid var(--border-color); border-radius: 4px;" placeholder="Leave blank for Anonymous">
+        </div>
+
+        <div>
             <label style="display: block; font-weight: 700; margin-bottom: 0.5rem;">Title</label>
             <input type="text" id="post-title" style="width: 100%; padding: 1rem; border: 1px solid var(--border-color); border-radius: 4px;" placeholder="Enter post title">
         </div>
@@ -34,6 +39,8 @@
 {% block scripts %}
 <script>
     async function submitPost() {
+        const authorInput = document.getElementById('post-author-input').value.trim();
+        const authorName = authorInput || '익명';
         const title = document.getElementById('post-title').value;
         const category = document.getElementById('post-category').value;
         const content = document.getElementById('post-content').value;
@@ -58,7 +65,7 @@
                 title,
                 category,
                 content,
-                author: 'Admin',
+                author: authorName,
                 author_id: userId,
                 date_posted: firebase.firestore.Timestamp.now(),
                 views: 0,

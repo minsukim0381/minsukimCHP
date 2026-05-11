@@ -39,10 +39,14 @@
         <div style="border-top: 1px solid var(--border-color); padding-top: 40px;">
             <h3 style="font-size: 1.5rem; margin-bottom: 2rem;">Comments (<span id="comment-count">0</span>)</h3>
             
-            <div style="margin-bottom: 3rem;">
-                <textarea id="comment-input" style="width: 100%; height: 100px; padding: 1rem; border: 1px solid var(--border-color); border-radius: 4px; margin-bottom: 1rem;" placeholder="Add a comment..."></textarea>
+            <div style="margin-bottom: 3rem; background: var(--gray-light); padding: 2rem; border-radius: 8px;">
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; font-weight: 700; margin-bottom: 0.5rem; font-size: 0.8rem;">Your Name</label>
+                    <input type="text" id="comment-author-input" style="width: 200px; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;" placeholder="익명">
+                </div>
+                <textarea id="comment-input" style="width: 100%; height: 80px; padding: 1rem; border: 1px solid var(--border-color); border-radius: 4px; margin-bottom: 1rem; font-family: inherit;" placeholder="Add a comment..."></textarea>
                 <div style="display: flex; justify-content: flex-end;">
-                    <button class="btn-cyber" onclick="addComment()">Post Comment</button>
+                    <button class="btn-cyber" style="padding: 0.6rem 1.5rem;" onclick="addComment()">Post Comment</button>
                 </div>
             </div>
 
@@ -107,8 +111,7 @@
             if (likes.includes(userId)) document.getElementById('like-btn').classList.add('active-like');
             if (dislikes.includes(userId)) document.getElementById('dislike-btn').classList.add('active-dislike');
 
-            // Show delete button if author (simplified logic)
-            if (post.author_id === userId || post.author === 'Admin') {
+            if (post.author_id && post.author_id === userId) {
                 document.getElementById('delete-btn').style.display = 'block';
             }
             
@@ -188,12 +191,14 @@
     }
 
     async function addComment() {
+        const authorInput = document.getElementById('comment-author-input').value.trim();
+        const authorName = authorInput || '익명';
         const input = document.getElementById('comment-input');
         const content = input.value.trim();
         if (!content) return;
 
         await db.collection('posts').doc(postId).collection('comments').add({
-            author: 'User_' + userId.substr(-4),
+            author: authorName,
             author_id: userId,
             content: content,
             date_posted: firebase.firestore.Timestamp.now()
@@ -204,16 +209,23 @@
     }
 
     async function deletePost() {
-        if (!confirm('Are you sure you want to delete this post?')) return;
+        if (!confirm('정말로 이 게시글을 삭제하시겠습니까?')) return;
         
-        // For simplicity, we allow deleting if author_id matches or if Admin
-        // In a real app, this would be handled by Firebase Security Rules
         try {
-            await db.collection('posts').doc(postId).delete();
-            alert('Post deleted.');
+            const docRef = db.collection('posts').doc(postId);
+            const doc = await docRef.get();
+            const post = doc.data();
+
+            if (post.author_id !== userId) {
+                alert('본인이 작성한 글만 삭제할 수 있습니다.');
+                return;
+            }
+
+            await docRef.delete();
+            alert('게시글이 삭제되었습니다.');
             location.href = '/board';
         } catch (e) {
-            alert('Error deleting post: ' + e.message);
+            alert('삭제 중 오류가 발생했습니다: ' + e.message);
         }
     }
 
