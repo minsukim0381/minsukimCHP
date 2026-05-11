@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Affiliates | Precision Control Robotics{% endblock %}
+
+{% block content %}
+<section class="container" style="padding: 100px 0;">
+    <div style="text-align: center; margin-bottom: 100px;">
+        <h1 style="font-size: 4rem; font-weight: 800; margin-bottom: 1.5rem; letter-spacing: -2px;" data-i18n="affiliates-hero-title">Our Global Network</h1>
+        <p style="font-size: 1.2rem; color: var(--gray-mid); max-width: 800px; margin: 0 auto;" data-i18n="affiliates-hero-desc">Collaboration is at the heart of innovation. We work with world-class partners to push the boundaries of robotics.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 3rem;">
+        <!-- Affiliate 1 -->
+        <div style="padding: 3rem; background: var(--gray-light); border-radius: 24px; border: 1px solid var(--border-color); transition: border-color 0.3s;">
+            <div style="font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem; color: var(--accent-neon-cyan);" data-i18n="affiliate-1-title">GLOBAL TECH</div>
+            <p style="color: var(--gray-mid); line-height: 1.8; margin-bottom: 2rem;" data-i18n="affiliate-1-desc">
+                A leading provider of high-precision sensors and optical systems. Global Tech partners with us for our vision-based robotic modules.
+            </p>
+            <a href="#" style="color: white; text-decoration: none; font-weight: 600; font-size: 0.9rem;" data-i18n="visit-website">Visit Website →</a>
+        </div>
+
+        <!-- Affiliate 2 -->
+        <div style="padding: 3rem; background: var(--gray-light); border-radius: 24px; border: 1px solid var(--border-color); transition: border-color 0.3s;">
+            <div style="font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem; color: var(--accent-neon-purple);" data-i18n="affiliate-2-title">AI SYSTEMS</div>
+            <p style="color: var(--gray-mid); line-height: 1.8; margin-bottom: 2rem;" data-i18n="affiliate-2-desc">
+                Specializing in edge computing and deep learning architectures. Our AI integration layer is co-developed with AI Systems.
+            </p>
+            <a href="#" style="color: white; text-decoration: none; font-weight: 600; font-size: 0.9rem;" data-i18n="visit-website">Visit Website →</a>
+        </div>
+
+        <!-- Affiliate 3 -->
+        <div style="padding: 3rem; background: var(--gray-light); border-radius: 24px; border: 1px solid var(--border-color); transition: border-color 0.3s;">
+            <div style="font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem; color: var(--accent-neon-pink);" data-i18n="affiliate-3-title">ROBO-CORP</div>
+            <p style="color: var(--gray-mid); line-height: 1.8; margin-bottom: 2rem;" data-i18n="affiliate-3-desc">
+                Our hardware manufacturing partner for heavy-duty components and specialized robotic end-effectors.
+            </p>
+            <a href="#" style="color: white; text-decoration: none; font-weight: 600; font-size: 0.9rem;" data-i18n="visit-website">Visit Website →</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

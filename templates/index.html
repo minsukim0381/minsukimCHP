@@ -3,30 +3,66 @@
 {% block title %}Precision Control Robotics | 홈{% endblock %}
 
 {% block content %}
-<section class="hero-full" style="background-image: url('/static/img/hero_main.png');">
+<section class="hero-full" style="background-image: url('/static/img/hero_new.png');">
     <div class="hero-overlay">
         <h1 data-i18n="hero-title">상상 그 이상의 정밀함</h1>
         <p data-i18n="hero-desc">인간과 로봇이 공존하는 정밀 제어 공정의 새로운 표준을 제시합니다.</p>
-        <button class="btn-cyber" data-i18n="btn-explore" onclick="location.href='/products'">기술 살펴보기</button>
+        <button class="btn-cyber" data-i18n="btn-explore" onclick="location.href='/products'">Explore Technology</button>
+    </div>
+</section>
+
+<section class="affiliate-section">
+    <div class="container">
+        <div class="logo-strip">
+            <div>GLOBAL TECH</div>
+            <div>AI SYSTEMS</div>
+            <div>ROBO-CORP</div>
+            <div>PRECISION MFG</div>
+            <div>FUTURE LOGISTICS</div>
+        </div>
+    </div>
+</section>
+
+<section class="business-section">
+    <div class="container">
+        <h2 class="section-title" data-i18n="nav-business" style="text-align: left; margin-bottom: 3rem;">사업영역</h2>
+        <div class="business-grid">
+            <div class="business-card" onclick="location.href='/business'">
+                <img src="/static/img/business_automation.png" alt="Industrial Automation">
+                <div class="business-content">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;" data-i18n="business-area-1-home-t">Industrial Automation</h3>
+                    <p style="font-size: 0.9rem; opacity: 0.8;" data-i18n="business-area-1-home-d">Advanced 6-axis joint control systems for high-precision manufacturing.</p>
+                </div>
+            </div>
+            <div class="business-card" onclick="location.href='/business'">
+                <img src="/static/img/business_ai.png" alt="Smart Factory AI">
+                <div class="business-content">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;" data-i18n="business-area-2-home-t">Smart Factory AI</h3>
+                    <p style="font-size: 0.9rem; opacity: 0.8;" data-i18n="business-area-2-home-d">Integrating deep learning with robotic systems for adaptive production.</p>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 
 <section class="product-section">
     <div class="container">
-        <h2 class="section-title" data-i18n="section-products">혁신적인 제품 라인업</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4rem;">
+            <h2 class="section-title" data-i18n="section-products" style="margin: 0;">혁신적인 제품 라인업</h2>
+            <button class="btn-cyber" style="background: transparent; border: 1px solid var(--accent-neon-cyan); color: var(--accent-neon-cyan); font-size: 0.7rem;" data-i18n="btn-details" onclick="location.href='/products'">자세히 보기</button>
+        </div>
         <div class="product-grid">
             <div class="product-card">
                 <img src="/static/img/products_main.png" alt="Product 1">
             </div>
             <div class="product-card">
-                <h3 style="font-size: 2rem; margin-bottom: 1rem;">Collaborative Robots</h3>
-                <p style="color: var(--gray-mid); margin-bottom: 2rem;" data-i18n="product-desc">당사의 협동 로봇은 고도의 정밀도와 안전성을 결합하여 제조 공정의 효율을 극대화합니다. 0.01mm의 반복 정밀도를 보장하는 X-시리즈를 만나보세요.</p>
-                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; color: var(--gray-mid);">
-                    <li data-i18n="product-feature-1">• 고정밀 6축 다관절 제어</li>
-                    <li data-i18n="product-feature-2">• 지능형 충돌 감지 및 안전 로직</li>
-                    <li data-i18n="product-feature-3">• C# 및 Python 통합 API 지원</li>
+                <h3 style="font-size: 2.5rem; margin-bottom: 1.5rem; letter-spacing: -1px;">RB Series</h3>
+                <p style="color: var(--gray-mid); margin-bottom: 2rem; font-size: 1.1rem;" data-i18n="product-desc">당사의 협동 로봇은 고도의 정밀도와 안전성을 결합하여 제조 공정의 효율을 극대화합니다.</p>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 1rem; color: var(--gray-mid);">
+                    <li data-i18n="product-feature-1" style="display: flex; align-items: center; gap: 0.5rem;"><span style="color: var(--accent-neon-cyan);">▸</span> 고정밀 6축 다관절 제어</li>
+                    <li data-i18n="product-feature-2" style="display: flex; align-items: center; gap: 0.5rem;"><span style="color: var(--accent-neon-cyan);">▸</span> 지능형 충돌 감지 및 안전 로직</li>
+                    <li data-i18n="product-feature-3" style="display: flex; align-items: center; gap: 0.5rem;"><span style="color: var(--accent-neon-cyan);">▸</span> C# 및 Python 통합 API 지원</li>
                 </ul>
-                <button class="btn-cyber" style="margin-top: 2rem; background: transparent; border: 1px solid white;" data-i18n="btn-details" onclick="location.href='/products'">자세히 보기</button>
             </div>
         </div>
     </div>

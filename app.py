@@ -27,6 +27,14 @@ def products():
 def tech():
     return render_template('tech.html')
 
+@app.route('/business')
+def business():
+    return render_template('business.html')
+
+@app.route('/affiliates')
+def affiliates():
+    return render_template('affiliates.html')
+
 @app.route('/board')
 def board():
     category = request.args.get('category')

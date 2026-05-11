@@ -12,9 +12,9 @@
     <div id="loading-spinner" style="text-align: center; padding: 4rem;">Loading post...</div>
     
     <div id="post-container" style="display: none;">
-        <h1 id="post-title" style="font-size: 3rem; font-weight: 800; margin-bottom: 1.5rem;"></h1>
+        <h1 id="post-title" class="responsive-title" style="font-size: 3rem; font-weight: 800; margin-bottom: 1.5rem;"></h1>
         
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem;">
+        <div class="post-header-meta" style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
             <div style="display: flex; gap: 1rem; color: var(--gray-mid); font-size: 0.9rem;">
                 <span id="post-author"></span>
                 <span>|</span>
@@ -36,17 +36,19 @@
         <div id="post-content-body" style="font-size: 1.15rem; line-height: 1.8; margin-bottom: 60px;"></div>
 
         <!-- Comments Section -->
-        <div style="border-top: 1px solid var(--border-color); padding-top: 40px;">
-            <h3 style="font-size: 1.5rem; margin-bottom: 2rem;"><span data-i18n="label-comments">댓글</span> (<span id="comment-count">0</span>)</h3>
+        <div style="border-top: 1px solid var(--border-color); padding-top: 30px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+                <h3 style="font-size: 1.1rem; margin: 0;"><span data-i18n="label-comments">댓글</span> (<span id="comment-count">0</span>)</h3>
+            </div>
             
-            <div style="margin-bottom: 3rem; background: var(--gray-light); padding: 2rem; border-radius: 8px;">
-                <div style="margin-bottom: 1rem;">
-                    <label style="display: block; font-weight: 700; margin-bottom: 0.5rem; font-size: 0.8rem;" data-i18n="label-your-name">이름</label>
-                    <input type="text" id="comment-author-input" style="width: 200px; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;" data-i18n="placeholder-comment" placeholder="익명">
+            <div class="comment-input-bar">
+                <div style="display: flex; gap: 0.4rem;">
+                    <input type="text" id="comment-author-input" style="width: 90px; padding: 0.4rem 0.6rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: white; font-size: 0.75rem;" data-i18n="label-your-name" placeholder="이름">
+                    <input type="password" id="comment-password-input" style="width: 90px; padding: 0.4rem 0.6rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: white; font-size: 0.75rem;" data-i18n="comment-password" placeholder="비번">
                 </div>
-                <textarea id="comment-input" style="width: 100%; height: 80px; padding: 1rem; border: 1px solid var(--border-color); border-radius: 4px; margin-bottom: 1rem; font-family: inherit;" data-i18n="placeholder-comment" placeholder="댓글을 입력하세요..."></textarea>
-                <div style="display: flex; justify-content: flex-end;">
-                    <button class="btn-cyber" style="padding: 0.6rem 1.5rem;" data-i18n="btn-comment" onclick="addComment()">댓글 등록</button>
+                <div style="flex: 1; display: flex; gap: 0.4rem;">
+                    <textarea id="comment-input" style="flex: 1; min-height: 32px; height: 32px; padding: 0.4rem 0.8rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: white; font-size: 0.85rem; resize: none; font-family: inherit; line-height: 1.4; overflow: hidden;" data-i18n="placeholder-comment" placeholder="댓글을 입력하세요..." oninput="this.style.height = '32px'; this.style.height = this.scrollHeight + 'px'"></textarea>
+                    <button class="btn-cyber" style="padding: 0 1.2rem; font-size: 0.75rem; white-space: nowrap; height: 32px;" data-i18n="btn-comment" onclick="addComment()">등록</button>
                 </div>
             </div>
 
@@ -57,23 +59,76 @@
     </div>
 </div>
 
+<!-- Custom Cyber Modal -->
+<div id="cyber-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; backdrop-filter: blur(10px); justify-content: center; align-items: center;">
+    <div style="background: var(--gray-dark); border: 2px solid var(--accent-neon-cyan); border-radius: 15px; padding: 2.5rem; width: 90%; max-width: 450px; box-shadow: 0 0 30px rgba(0, 243, 255, 0.2); position: relative;">
+        <h2 id="modal-title" style="color: var(--accent-neon-cyan); margin-bottom: 1.5rem; font-size: 1.5rem; text-transform: uppercase; letter-spacing: 2px;">CONFIRMATION</h2>
+        <p id="modal-msg" style="color: var(--gray-mid); margin-bottom: 2rem; font-size: 1rem; line-height: 1.6;"></p>
+        
+        <div id="modal-input-container" style="display: none; margin-bottom: 2rem;">
+            <input type="password" id="modal-password-input" style="width: 100%; padding: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); border-radius: 6px; color: white; outline: none; font-size: 1.1rem; text-align: center; letter-spacing: 5px;" placeholder="••••••">
+        </div>
+
+        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+            <button id="modal-cancel-btn" class="btn-cyber" style="background: transparent; border: 1px solid var(--gray-mid); color: var(--gray-mid); padding: 0.6rem 1.5rem;" data-i18n="btn-cancel">취소</button>
+            <button id="modal-confirm-btn" class="btn-cyber" style="padding: 0.6rem 2rem;" data-i18n="btn-confirm">확인</button>
+        </div>
+    </div>
+</div>
+
 <style>
     .vote-btn {
         background: var(--gray-light);
         border: 1px solid var(--border-color);
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
+        padding: 0.6rem 1.2rem;
+        border-radius: 50px;
         cursor: pointer;
-        font-weight: 600;
-        transition: all 0.2s;
+        font-weight: 700;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        color: var(--gray-mid);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
-    .vote-btn.active-like { background: #e6f3ff; border-color: var(--accent-blue); color: var(--accent-blue); }
-    .vote-btn.active-dislike { background: #fff0f0; border-color: #ff4d4d; color: #ff4d4d; }
+    .vote-btn:hover {
+        border-color: white;
+        color: white;
+    }
+    .vote-btn.active-like { 
+        background: rgba(0, 243, 255, 0.1); 
+        border-color: var(--accent-neon-cyan); 
+        color: var(--accent-neon-cyan); 
+        box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+    }
+    .vote-btn.active-dislike { 
+        background: rgba(255, 0, 255, 0.1); 
+        border-color: var(--accent-neon-pink); 
+        color: var(--accent-neon-pink); 
+        box-shadow: 0 0 15px rgba(255, 0, 255, 0.2);
+    }
     
     .comment-item {
-        padding-bottom: 1.5rem;
-        border-bottom: 1px solid var(--gray-light);
+        padding: 1.5rem;
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        margin-bottom: 1rem;
     }
+
+    .comment-vote-btn {
+        background: transparent;
+        border: none;
+        color: var(--gray-mid);
+        cursor: pointer;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        transition: color 0.2s;
+    }
+    .comment-vote-btn:hover { color: white; }
+    .comment-vote-btn.active-like { color: var(--accent-neon-cyan); }
+    .comment-vote-btn.active-dislike { color: var(--accent-neon-pink); }
 </style>
 {% endblock %}
 
@@ -84,6 +139,41 @@
     if (!userId) {
         userId = 'user_' + Math.random().toString(36).substr(2, 9);
         localStorage.setItem('robot_site_userid', userId);
+    }
+
+    function showCyberModal(title, msg, showInput = false) {
+        return new Promise((resolve) => {
+            const modal = document.getElementById('cyber-modal');
+            const titleEl = document.getElementById('modal-title');
+            const msgEl = document.getElementById('modal-msg');
+            const inputContainer = document.getElementById('modal-input-container');
+            const input = document.getElementById('modal-password-input');
+            const confirmBtn = document.getElementById('modal-confirm-btn');
+            const cancelBtn = document.getElementById('modal-cancel-btn');
+
+            titleEl.innerText = title;
+            msgEl.innerText = msg;
+            input.value = '';
+            inputContainer.style.display = showInput ? 'block' : 'none';
+            modal.style.display = 'flex';
+
+            const cleanup = () => {
+                confirmBtn.onclick = null;
+                cancelBtn.onclick = null;
+                modal.style.display = 'none';
+            };
+
+            confirmBtn.onclick = () => {
+                const val = showInput ? input.value : true;
+                cleanup();
+                resolve(val);
+            };
+
+            cancelBtn.onclick = () => {
+                cleanup();
+                resolve(null);
+            };
+        });
     }
 
     async function loadPostDetail() {
@@ -176,83 +266,226 @@
     async function loadComments() {
         const list = document.getElementById('comments-list');
         const countSpan = document.getElementById('comment-count');
+        const currentLang = localStorage.getItem('preferred_lang') || 'ko';
+        const dict = translations[currentLang];
         
-        const snapshot = await db.collection('posts').doc(postId).collection('comments')
-            .orderBy('date_posted', 'desc').get();
-        
-        list.innerHTML = '';
+        const snapshot = await db.collection('posts').doc(postId).collection('comments').get();
         countSpan.innerText = snapshot.size;
-
+        
+        let allComments = [];
         snapshot.forEach(doc => {
-            const c = doc.data();
-            list.innerHTML += `
-                <div class="comment-item">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                        <div>
-                            <span style="font-weight: 700;">${c.author}</span>
-                            <span style="font-size: 0.8rem; color: var(--gray-mid); margin-left: 1rem;">${c.date_posted.toDate().toLocaleString()}</span>
-                        </div>
-                        <button onclick="deleteComment('${doc.id}')" style="background:none; border:none; color:#ff4d4d; cursor:pointer; font-size:0.7rem; font-weight:600;">DELETE</button>
-                    </div>
-                    <p style="margin: 0; color: #444;">${c.content}</p>
-                </div>
-            `;
+            allComments.push({ id: doc.id, ...doc.data() });
+        });
+
+        const parents = allComments.filter(c => !c.parent_id);
+        const replies = allComments.filter(c => c.parent_id);
+
+        parents.sort((a, b) => {
+            const scoreA = (a.likes || []).length - (a.dislikes || []).length;
+            const scoreB = (b.likes || []).length - (b.dislikes || []).length;
+            if (scoreA !== scoreB) return scoreB - scoreA;
+            return b.date_posted.toDate() - a.date_posted.toDate();
+        });
+
+        list.innerHTML = '';
+        parents.forEach(p => {
+            renderComment(p, list, false);
+            const childReplies = replies.filter(r => r.parent_id === p.id);
+            childReplies.sort((a, b) => a.date_posted.toDate() - b.date_posted.toDate());
+            childReplies.forEach(r => renderComment(r, list, true));
+        });
+
+        document.querySelectorAll('.delete-comment-btn').forEach(btn => {
+            btn.onclick = () => deleteComment(btn.getAttribute('data-id'));
+        });
+        document.querySelectorAll('.comment-vote-btn').forEach(btn => {
+            btn.onclick = () => voteComment(btn.getAttribute('data-id'), btn.getAttribute('data-type'));
+        });
+        document.querySelectorAll('.reply-comment-btn').forEach(btn => {
+            btn.onclick = () => showReplyForm(btn.getAttribute('data-id'));
         });
     }
 
+    function renderComment(c, container, isReply) {
+        const currentLang = localStorage.getItem('preferred_lang') || 'ko';
+        const dict = translations[currentLang];
+        const likes = c.likes || [];
+        const dislikes = c.dislikes || [];
+        const score = likes.length - dislikes.length;
+        const isLiked = likes.includes(userId);
+        const isDisliked = dislikes.includes(userId);
+
+        const commentDiv = document.createElement('div');
+        commentDiv.className = 'comment-item';
+        if (isReply) {
+            commentDiv.style.marginLeft = '2.5rem';
+            commentDiv.style.background = 'rgba(255, 255, 255, 0.01)';
+            commentDiv.style.borderLeft = '2px solid var(--accent-neon-cyan)';
+            commentDiv.style.padding = '1rem 1.2rem';
+        }
+
+        commentDiv.innerHTML = `
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.8rem;">
+                <div>
+                    <span style="font-weight: 700; color: ${isReply ? 'var(--accent-neon-cyan)' : 'white'}; font-size: 0.85rem;">${c.author}</span>
+                    <span style="font-size: 0.75rem; color: var(--gray-mid); margin-left: 1rem;">${c.date_posted.toDate().toLocaleString()}</span>
+                </div>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    ${!isReply ? `<button class="reply-comment-btn" data-id="${c.id}" style="background:none; border:none; color:var(--accent-neon-cyan); cursor:pointer; font-size:0.7rem; font-weight:700; text-transform:uppercase;">${dict['btn-reply']}</button>` : ''}
+                    <button class="delete-comment-btn" data-id="${c.id}" style="background:none; border:none; color:rgba(255, 255, 255, 0.2); cursor:pointer; font-size:0.7rem; font-weight:600;">DELETE</button>
+                </div>
+            </div>
+            <p style="margin: 0 0 1rem 0; color: var(--gray-mid); font-size: ${isReply ? '0.9rem' : '1rem'}; line-height: 1.5; white-space: pre-wrap;">${c.content}</p>
+            <div style="display: flex; gap: 1.2rem; align-items: center;">
+                <button class="comment-vote-btn ${isLiked ? 'active-like' : ''}" data-id="${c.id}" data-type="like" style="font-size: 0.75rem;">
+                    👍 <span>${likes.length}</span>
+                </button>
+                <button class="comment-vote-btn ${isDisliked ? 'active-dislike' : ''}" data-id="${c.id}" data-type="dislike" style="font-size: 0.75rem;">
+                    👎 <span>${dislikes.length}</span>
+                </button>
+                <span style="font-size: 0.65rem; color: var(--gray-mid); font-weight: 700; text-transform: uppercase; opacity: 0.6;">Score: ${score}</span>
+            </div>
+            <div id="reply-form-container-${c.id}" style="margin-top: 1rem; display: none;"></div>
+        `;
+        container.appendChild(commentDiv);
+    }
+
+    async function showReplyForm(commentId) {
+        const container = document.getElementById(`reply-form-container-${commentId}`);
+        if (container.style.display === 'block') { container.style.display = 'none'; return; }
+        const currentLang = localStorage.getItem('preferred_lang') || 'ko';
+        const dict = translations[currentLang];
+        container.innerHTML = `
+            <div class="mobile-stack" style="margin-top: 0.6rem; display: flex; gap: 0.3rem; align-items: flex-end; background: rgba(255,255,255,0.01); padding: 0.4rem; border-radius: 4px; border: 1px solid rgba(0,243,255,0.1);">
+                <input type="text" id="reply-author-${commentId}" style="width: 80px; padding: 0.3rem 0.5rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 4px; color: white; font-size: 0.7rem;" placeholder="Name">
+                <input type="password" id="reply-pass-${commentId}" style="width: 80px; padding: 0.3rem 0.5rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 4px; color: white; font-size: 0.7rem;" placeholder="Pass">
+                <textarea id="reply-content-${commentId}" style="flex: 1; min-height: 26px; height: 26px; padding: 0.3rem 0.6rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 4px; color: white; font-size: 0.8rem; resize: none; font-family: inherit; line-height: 1.4; overflow: hidden;" placeholder="Write a reply..." oninput="this.style.height = '26px'; this.style.height = this.scrollHeight + 'px'"></textarea>
+                <button class="btn-cyber" style="padding: 0 0.8rem; font-size: 0.7rem; height: 26px;" onclick="addComment('${commentId}')">등록</button>
+            </div>`;
+        container.style.display = 'block';
+    }
+
+    async function voteComment(commentId, type) {
+        const docRef = db.collection('posts').doc(postId).collection('comments').doc(commentId);
+        const doc = await docRef.get();
+        const comment = doc.data();
+        let likes = comment.likes || [];
+        let dislikes = comment.dislikes || [];
+
+        if (type === 'like') {
+            if (likes.includes(userId)) {
+                likes = likes.filter(id => id !== userId);
+            } else {
+                likes.push(userId);
+                dislikes = dislikes.filter(id => id !== userId);
+            }
+        } else {
+            if (dislikes.includes(userId)) {
+                dislikes = dislikes.filter(id => id !== userId);
+            } else {
+                dislikes.push(userId);
+                likes = likes.filter(id => id !== userId);
+            }
+        }
+
+        await docRef.update({ 
+            likes, 
+            dislikes,
+            vote_score: (likes.length - dislikes.length)
+        });
+        
+        loadComments();
+    }
+
     async function deleteComment(commentId) {
+        console.log("Entering deleteComment for ID:", commentId);
         const currentLang = localStorage.getItem('preferred_lang') || 'ko';
         const dict = translations[currentLang];
         const masterPass = "20041105";
 
-        const inputPassword = prompt(dict['delete-confirm']);
+        const inputPassword = await showCyberModal(dict['nav-community'], dict['delete-confirm'], true);
         if (inputPassword === null) return;
 
         let authorized = false;
-        if (inputPassword === masterPass) {
-            if (confirm(dict['master-delete-confirm'])) {
-                authorized = true;
+        try {
+            if (inputPassword === masterPass) {
+                if (await showCyberModal(dict['master-approval-title'], dict['master-approval-msg'])) {
+                    authorized = true;
+                } else {
+                    return;
+                }
             } else {
-                return;
-            }
-        } else {
-            // For comments, we'll check if the author_id matches
-            // (Note: Comments don't have separate passwords, usually author-only or master)
-            const docRef = db.collection('posts').doc(postId).collection('comments').doc(commentId);
-            const doc = await docRef.get();
-            const comment = doc.data();
-            if (comment.author_id === userId || comment.author === 'Admin') {
-                authorized = true;
-            } else {
-                alert(dict['delete-fail']);
-                return;
-            }
-        }
+                const docRef = db.collection('posts').doc(postId).collection('comments').doc(commentId);
+                const doc = await docRef.get();
+                
+                if (!doc.exists) {
+                    console.error("Comment document does not exist:", commentId);
+                    return;
+                }
 
-        if (authorized) {
-            await db.collection('posts').doc(postId).collection('comments').doc(commentId).delete();
-            alert(dict['delete-success']);
-            loadComments();
+                const comment = doc.data();
+                
+                if (comment.password && comment.password.trim() !== "") {
+                    if (comment.password === inputPassword) {
+                        authorized = true;
+                    } else {
+                        alert(dict['delete-fail']);
+                        return;
+                    }
+                } else {
+                    if (comment.author_id === userId || comment.author === 'Admin') {
+                        authorized = true;
+                    } else {
+                        alert(dict['delete-fail']);
+                        return;
+                    }
+                }
+            }
+
+            if (authorized) {
+                await db.collection('posts').doc(postId).collection('comments').doc(commentId).delete();
+                alert(dict['comment-delete-success']);
+                loadComments();
+            }
+        } catch (error) {
+            console.error("Error deleting comment:", error);
+            alert(dict['delete-error'] + error.message);
         }
     }
 
-    async function addComment() {
+    async function addComment(parentId = null) {
         const currentLang = localStorage.getItem('preferred_lang') || 'ko';
         const dict = translations[currentLang];
-        const authorInput = document.getElementById('comment-author-input').value.trim();
-        const authorName = authorInput || dict['anonymous'];
-        const input = document.getElementById('comment-input');
-        const content = input.value.trim();
+        let author, pass, content, contentInput;
+        if (parentId) {
+            author = document.getElementById(`reply-author-${parentId}`).value.trim();
+            pass = document.getElementById(`reply-pass-${parentId}`).value.trim();
+            contentInput = document.getElementById(`reply-content-${parentId}`);
+            content = contentInput.value.trim();
+        } else {
+            author = document.getElementById('comment-author-input').value.trim();
+            pass = document.getElementById('comment-password-input').value.trim();
+            contentInput = document.getElementById('comment-input');
+            content = contentInput.value.trim();
+        }
         if (!content) return;
-
         await db.collection('posts').doc(postId).collection('comments').add({
-            author: authorName,
+            author: author || dict['anonymous'],
             author_id: userId,
+            password: pass,
             content: content,
+            parent_id: parentId,
+            likes: [],
+            dislikes: [],
+            vote_score: 0,
             date_posted: firebase.firestore.Timestamp.now()
         });
-
-        input.value = '';
+        if (parentId) document.getElementById(`reply-form-container-${parentId}`).style.display = 'none';
+        else {
+            document.getElementById('comment-author-input').value = '';
+            document.getElementById('comment-password-input').value = '';
+            contentInput.value = '';
+        }
         loadComments();
     }
 
@@ -261,7 +494,7 @@
         const dict = translations[currentLang];
         const masterPass = "20041105";
 
-        const inputPassword = prompt(dict['delete-confirm']);
+        const inputPassword = await showCyberModal(dict['nav-community'], dict['delete-confirm'], true);
         if (inputPassword === null) return;
         
         try {
@@ -271,7 +504,7 @@
 
             let authorized = false;
             if (inputPassword === masterPass) {
-                if (confirm(dict['master-delete-confirm'])) {
+                if (await showCyberModal(dict['master-approval-title'], dict['master-approval-msg'])) {
                     authorized = true;
                 } else {
                     return;

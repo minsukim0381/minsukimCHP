@@ -28,23 +28,37 @@
     {% block head %}{% endblock %}
 </head>
 <body>
+    <div class="bg-grid"></div>
     <header>
         <div class="container">
             <nav>
-                <div class="logo" onclick="location.href='/'">PRECISION<span>ROBOTICS</span></div>
+                <div class="logo" onclick="location.href='/'" style="cursor: pointer;">PRECISION<span>ROBOTICS</span></div>
                 <ul class="nav-links">
-                    <li><a href="/products" data-i18n="nav-products">Products</a></li>
-                    <li><a href="/tech" data-i18n="nav-tech">Tech Support</a></li>
-                    <li><a href="/board" data-i18n="nav-community">Community</a></li>
-                    <li><a href="/about" data-i18n="nav-about">About</a></li>
+                    <li><a href="/about" data-i18n="nav-about">회사소개</a></li>
+                    <li><a href="/products" data-i18n="nav-products">제품</a></li>
+                    <li><a href="/business" data-i18n="nav-business">사업영역</a></li>
+                    <li><a href="/board" data-i18n="nav-community">커뮤니티</a></li>
+                    <li><a href="/affiliates" data-i18n="nav-affiliates">관련회사</a></li>
                 </ul>
                 <div style="display: flex; gap: 1rem; align-items: center;">
-                    <button id="lang-toggle-btn" class="btn-cyber" style="background: transparent; color: var(--text-color); border: 1px solid var(--border-color); font-size: 0.75rem; padding: 0.4rem 0.8rem;" onclick="toggleLanguage()">English</button>
-                    <button class="btn-cyber" data-i18n="nav-contact" onclick="location.href='/contact'">Contact</button>
+                    <button id="lang-toggle-btn" class="btn-cyber" style="background: transparent; color: var(--text-color); border: 1px solid var(--border-color); font-size: 0.7rem; padding: 0.3rem 0.6rem;" onclick="toggleLanguage()">ENGLISH</button>
+                    <div class="mobile-menu-toggle" id="mobile-toggle">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
                 </div>
             </nav>
         </div>
     </header>
+
+    <div class="mobile-nav" id="mobile-nav">
+        <a href="/about" data-i18n="nav-about" onclick="toggleMobileMenu()">회사소개</a>
+        <a href="/products" data-i18n="nav-products" onclick="toggleMobileMenu()">제품</a>
+        <a href="/business" data-i18n="nav-business" onclick="toggleMobileMenu()">사업영역</a>
+        <a href="/board" data-i18n="nav-community" onclick="toggleMobileMenu()">커뮤니티</a>
+        <a href="/affiliates" data-i18n="nav-affiliates" onclick="toggleMobileMenu()">관련회사</a>
+    </div>
 
     <main id="app-root">
         {% block content %}{% endblock %}
@@ -56,6 +70,53 @@
         </div>
     </footer>
 
+    <script>
+        // Scroll Reveal Animation
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('reveal-visible');
+                }
+            });
+        }, observerOptions);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('section, .product-card, .business-card').forEach(el => {
+                el.classList.add('reveal-hidden');
+                observer.observe(el);
+            });
+
+            // Mobile Menu Logic
+            const mobileToggle = document.getElementById('mobile-toggle');
+            const mobileNav = document.getElementById('mobile-nav');
+
+            mobileToggle.addEventListener('click', () => {
+                toggleMobileMenu();
+            });
+        });
+
+        function toggleMobileMenu() {
+            const mobileToggle = document.getElementById('mobile-toggle');
+            const mobileNav = document.getElementById('mobile-nav');
+            mobileNav.classList.toggle('active');
+            
+            // Hamburger animation
+            const spans = mobileToggle.querySelectorAll('span');
+            if (mobileNav.classList.contains('active')) {
+                spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+                spans[1].style.opacity = '0';
+                spans[2].style.transform = 'rotate(-45deg) translate(7px, -7px)';
+            } else {
+                spans[0].style.transform = 'none';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'none';
+            }
+        }
+    </script>
     {% block scripts %}{% endblock %}
 </body>
 </html>

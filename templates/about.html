@@ -4,32 +4,62 @@
 
 {% block content %}
 <div class="container" style="padding: 100px 0;">
-    <div style="max-width: 900px; margin: 0 auto; text-align: center;">
-        <h1 style="font-size: 4rem; font-weight: 800; margin-bottom: 2rem;" data-i18n="about-hero">Innovation for<br>Human-Robot Coexistence</h1>
-        <p style="font-size: 1.5rem; color: var(--gray-mid); line-height: 1.6; margin-bottom: 60px;" data-i18n="about-hero-desc">
-            Precision Control Robotics는 로봇 원천 기술을 바탕으로<br>
-            인간과 로봇이 안전하게 공존하는 미래를 만들어갑니다.
+    <div style="max-width: 900px; margin: 0 auto; text-align: center; margin-bottom: 120px;">
+        <h1 style="font-size: 5rem; font-weight: 800; margin-bottom: 2rem; letter-spacing: -3px;" data-i18n="about-hero">Innovation for<br>Human-Robot Coexistence</h1>
+        <p style="font-size: 1.2rem; color: var(--gray-mid); line-height: 1.8;" data-i18n="about-hero-desc">
+            Precision Control Robotics creates a future where humans and robots safely coexist based on original robot technology.
         </p>
     </div>
 
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; margin-top: 80px;">
-        <img src="/static/img/hero_main.png" alt="Office" style="width: 100%; border-radius: 8px;">
-        <div style="display: flex; flex-direction: column; justify-content: center;">
-            <h2 style="font-size: 2rem; margin-bottom: 1.5rem;" data-i18n="about-vision">Corporate Vision</h2>
-            <p style="font-size: 1.1rem; color: var(--gray-mid); line-height: 1.8;" data-i18n="about-vision-desc">
-                우리는 단순한 기계를 만드는 것을 넘어, 인간의 가능성을 확장하는 도구를 연구합니다. 
-                세계 최고 수준의 정밀 제어 알고리즘과 하드웨어 설계 기술을 통해 대한민국을 넘어 글로벌 로봇 시장의 표준을 선도하겠습니다.
-            </p>
-            <div style="margin-top: 3rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+    <!-- CEO Section -->
+    <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 6rem; align-items: center; margin-bottom: 150px;">
+        <div style="position: relative;">
+            <img src="/static/img/ceo.png" alt="CEO" style="width: 100%; border-radius: 24px; box-shadow: 0 30px 60px rgba(0,0,0,0.5);">
+            <div style="position: absolute; bottom: -30px; right: -30px; background: var(--accent-neon-cyan); color: #000; padding: 2rem; border-radius: 16px; font-weight: 800; font-size: 1.2rem;">
+                CEO KIM MIN SU
+            </div>
+        </div>
+        <div>
+            <h2 style="font-size: 3rem; font-weight: 800; margin-bottom: 2rem; letter-spacing: -1px;" data-i18n="about-leadership">Leadership & Vision</h2>
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
                 <div>
-                    <h4 style="font-size: 2.5rem; font-weight: 800; color: var(--accent-blue);">2015</h4>
-                    <p style="color: var(--gray-mid);">Established</p>
+                    <h3 style="color: var(--accent-neon-cyan); margin-bottom: 0.5rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px;" data-i18n="about-ceo-bio-title">Biography</h3>
+                    <p style="color: var(--gray-mid); font-size: 1.1rem; line-height: 1.8;" data-i18n="about-ceo-bio">
+                        Dr. Kim Min Su is a pioneer in the field of collaborative robotics. With over 25 years of experience in AI-driven motion control, he has led Precision Robotics to become a global leader in precision engineering.
+                    </p>
                 </div>
                 <div>
-                    <h4 style="font-size: 2.5rem; font-weight: 800; color: var(--accent-blue);">150+</h4>
-                    <p style="color: var(--gray-mid);">Patents</p>
+                    <h3 style="color: var(--accent-neon-cyan); margin-bottom: 0.5rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px;" data-i18n="about-ceo-port-title">Portfolio</h3>
+                    <ul style="list-style: none; display: flex; flex-direction: column; gap: 1rem; color: var(--gray-mid); font-size: 1rem;">
+                        <li data-i18n="about-ceo-port-1">• PhD in Robotics, Stanford University</li>
+                        <li data-i18n="about-ceo-port-2">• Former Lead Engineer at Global Robotics Institute</li>
+                        <li data-i18n="about-ceo-port-3">• Recipient of the "Industrial Innovation Award 2024"</li>
+                        <li data-i18n="about-ceo-port-4">• Published over 40 research papers on 6-axis joint stability</li>
+                    </ul>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 6rem; align-items: center;">
+        <div style="display: flex; flex-direction: column; justify-content: center;">
+            <h2 style="font-size: 3rem; font-weight: 800; margin-bottom: 2rem; letter-spacing: -1px;" data-i18n="about-vision">Corporate Vision</h2>
+            <p style="font-size: 1.1rem; color: var(--gray-mid); line-height: 1.8;" data-i18n="about-vision-desc">
+                Beyond making simple machines, we research tools that expand human potential. We will lead the standards of the global robot market through world-class precision control algorithms.
+            </p>
+            <div style="margin-top: 3rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div style="padding: 2rem; background: var(--gray-light); border-radius: 16px;">
+                    <h4 style="font-size: 3rem; font-weight: 800; color: var(--accent-neon-cyan);">2015</h4>
+                    <p style="color: var(--gray-mid);">Established</p>
+                </div>
+                <div style="padding: 2rem; background: var(--gray-light); border-radius: 16px;">
+                    <h4 style="font-size: 3rem; font-weight: 800; color: var(--accent-neon-purple);">150+</h4>
+                    <p style="color: var(--gray-mid);">Patents Held</p>
+                </div>
+            </div>
+        </div>
+        <div style="border-radius: 24px; overflow: hidden; border: 1px solid var(--border-color);">
+             <img src="/static/img/hero_new.png" alt="Vision" style="width: 100%; opacity: 0.8;">
         </div>
     </div>
 </div>

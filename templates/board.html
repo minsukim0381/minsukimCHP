@@ -18,15 +18,16 @@
     </div>
 
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 1rem; flex-wrap: wrap;">
-        <div style="display: flex; gap: 0.5rem; flex-grow: 1; max-width: 600px;">
+        <div class="search-container" style="display: flex; gap: 0.5rem; flex-grow: 1; max-width: 600px;">
             <select id="search-type" style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-color); color: var(--text-color); font-size: 0.8rem; min-width: 120px;">
                 <option value="all" data-i18n="search-type-all">제목+내용</option>
                 <option value="title" data-i18n="search-type-title">제목만</option>
                 <option value="content" data-i18n="search-type-content">내용만</option>
                 <option value="author" data-i18n="search-type-author">작성자</option>
+                <option value="comment" data-i18n="search-type-comment">댓글 내용</option>
             </select>
             <input type="text" id="search-input" data-i18n="search-placeholder" placeholder="검색어를 입력하세요" style="flex-grow: 1; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-color); color: var(--text-color); font-size: 0.8rem;">
-            <button class="btn-cyber" onclick="loadPosts()" style="padding: 0.5rem 1.5rem; font-size: 0.8rem;" data-i18n="btn-search">검색</button>
+            <button class="btn-cyber" id="btn-search" onclick="loadPosts()" style="padding: 0.5rem 1.5rem; font-size: 0.8rem; flex-shrink: 0; white-space: nowrap;" data-i18n="btn-search">검색</button>
         </div>
         <div style="display: flex; align-items: center; gap: 0.5rem;">
             <select id="sort-selector" onchange="loadPosts(currentCategory)" style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-color); color: var(--text-color); font-size: 0.8rem;">
@@ -89,22 +90,34 @@
 
             // Filter posts based on search query
             if (searchQuery) {
-                posts = posts.filter(post => {
-                    const title = (post.title || '').toLowerCase();
-                    const content = (post.content || '').toLowerCase();
-                    const author = (post.author || '').toLowerCase();
+                if (searchType === 'comment') {
+                    const commentMatches = await Promise.all(posts.map(async post => {
+                        const commentsSnapshot = await db.collection('posts').doc(post.id).collection('comments').get();
+                        let found = false;
+                        commentsSnapshot.forEach(cDoc => {
+                            if ((cDoc.data().content || '').toLowerCase().includes(searchQuery)) found = true;
+                        });
+                        return found ? post : null;
+                    }));
+                    posts = commentMatches.filter(p => p !== null);
+                } else {
+                    posts = posts.filter(post => {
+                        const title = (post.title || '').toLowerCase();
+                        const content = (post.content || '').toLowerCase();
+                        const author = (post.author || '').toLowerCase();
 
-                    if (searchType === 'all') {
-                        return title.includes(searchQuery) || content.includes(searchQuery);
-                    } else if (searchType === 'title') {
-                        return title.includes(searchQuery);
-                    } else if (searchType === 'content') {
-                        return content.includes(searchQuery);
-                    } else if (searchType === 'author') {
-                        return author.includes(searchQuery);
-                    }
-                    return true;
-                });
+                        if (searchType === 'all') {
+                            return title.includes(searchQuery) || content.includes(searchQuery);
+                        } else if (searchType === 'title') {
+                            return title.includes(searchQuery);
+                        } else if (searchType === 'content') {
+                            return content.includes(searchQuery);
+                        } else if (searchType === 'author') {
+                            return author.includes(searchQuery);
+                        }
+                        return true;
+                    });
+                }
             }
 
             // Client-side sorting to avoid Firestore index requirements
@@ -132,13 +145,13 @@
                 const date = post.date_posted.toDate().toLocaleDateString(currentLang === 'ko' ? 'ko-KR' : 'en-US');
                 const row = `
                     <tr class="post-row" onclick="location.href='/post/${post.id}'">
-                        <td style="padding: 1.5rem 1rem;">
+                        <td data-label="${dict['table-title']}" style="padding: 1.5rem 1rem;">
                             <div style="font-weight: 600;">${post.title}</div>
                             <div style="font-size: 0.7rem; color: var(--gray-mid); margin-top: 4px;">#${(post.category || 'ALL').toUpperCase()}</div>
                         </td>
-                        <td>${post.author || dict['anonymous']}</td>
-                        <td>${date}</td>
-                        <td>${post.views || 0}</td>
+                        <td data-label="${dict['table-author']}">${post.author || dict['anonymous']}</td>
+                        <td data-label="${dict['table-date']}">${date}</td>
+                        <td data-label="${dict['table-views']}">${post.views || 0}</td>
                     </tr>
                 `;
                 postsBody.innerHTML += row;
