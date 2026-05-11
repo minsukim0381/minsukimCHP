@@ -325,18 +325,18 @@
         }
 
         commentDiv.innerHTML = `
-            <div style="display: flex; justify-content: space-between; margin-bottom: 0.8rem;">
-                <div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.8rem; flex-wrap: wrap; gap: 0.5rem;">
+                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem;">
                     <span style="font-weight: 700; color: ${isReply ? 'var(--accent-neon-cyan)' : 'white'}; font-size: 0.85rem;">${c.author}</span>
-                    <span style="font-size: 0.75rem; color: var(--gray-mid); margin-left: 1rem;">${c.date_posted.toDate().toLocaleString()}</span>
+                    <span style="font-size: 0.75rem; color: var(--gray-mid);">${c.date_posted.toDate().toLocaleString()}</span>
                 </div>
                 <div style="display: flex; gap: 1rem; align-items: center;">
-                    ${!isReply ? `<button class="reply-comment-btn" data-id="${c.id}" style="background:none; border:none; color:var(--accent-neon-cyan); cursor:pointer; font-size:0.7rem; font-weight:700; text-transform:uppercase;">${dict['btn-reply']}</button>` : ''}
-                    <button class="delete-comment-btn" data-id="${c.id}" style="background:none; border:none; color:rgba(255, 255, 255, 0.2); cursor:pointer; font-size:0.7rem; font-weight:600;">DELETE</button>
+                    ${!isReply ? `<button class="reply-comment-btn" data-id="${c.id}" style="background:none; border:none; color:var(--accent-neon-cyan); cursor:pointer; font-size:0.75rem; font-weight:700; text-transform:uppercase; padding: 0.5rem 0;">${dict['btn-reply']}</button>` : ''}
+                    <button class="delete-comment-btn" data-id="${c.id}" style="background:none; border:none; color:rgba(255, 255, 255, 0.4); cursor:pointer; font-size:0.75rem; font-weight:600; padding: 0.5rem 0;">DELETE</button>
                 </div>
             </div>
-            <p style="margin: 0 0 1rem 0; color: var(--gray-mid); font-size: ${isReply ? '0.9rem' : '1rem'}; line-height: 1.5; white-space: pre-wrap;">${c.content}</p>
-            <div style="display: flex; gap: 1.2rem; align-items: center;">
+            <p style="margin: 0 0 1rem 0; color: var(--gray-mid); font-size: ${isReply ? '0.9rem' : '1rem'}; line-height: 1.5; white-space: pre-wrap; word-break: break-word;">${c.content}</p>
+            <div style="display: flex; gap: 1.2rem; align-items: center; flex-wrap: wrap;">
                 <button class="comment-vote-btn ${isLiked ? 'active-like' : ''}" data-id="${c.id}" data-type="like" style="font-size: 0.75rem;">
                     👍 <span>${likes.length}</span>
                 </button>
@@ -345,7 +345,7 @@
                 </button>
                 <span style="font-size: 0.65rem; color: var(--gray-mid); font-weight: 700; text-transform: uppercase; opacity: 0.6;">Score: ${score}</span>
             </div>
-            <div id="reply-form-container-${c.id}" style="margin-top: 1rem; display: none;"></div>
+            <div id="reply-form-container-${c.id}" style="margin-top: 1rem; display: none; width: 100%;"></div>
         `;
         container.appendChild(commentDiv);
     }

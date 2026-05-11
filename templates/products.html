@@ -6,17 +6,19 @@
 <div class="container" style="padding: 100px 0;">
     <h1 style="font-size: 3.5rem; font-weight: 800; margin-bottom: 4rem; text-align: center;" data-i18n="products-title">Product Portfolio</h1>
     
-    <div style="display: grid; gap: 80px;">
+    <div style="display: flex; flex-direction: column; gap: 80px;">
         <!-- Product 1 -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;">
-            <img src="/static/img/products_main.png" alt="X-1" style="width: 100%; border-radius: 8px;">
+        <div class="feature-row">
+            <div class="feature-image">
+                <img src="/static/img/products_main.png" alt="X-1">
+            </div>
             <div>
                 <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem; color: var(--accent-blue);" data-i18n="prod1-title">RB-Series Collaborative Robot</h2>
                 <p style="font-size: 1.2rem; color: var(--gray-mid); margin-bottom: 2rem;" data-i18n="prod1-desc">
                     협동로봇 RB시리즈는 인간과 같은 공간에서 작업하며 사람의 업무를 도와주는 6축 다관절 로봇입니다. 
                     핵심 부품 내재화를 통해 높은 품질 경쟁력을 갖추었습니다.
                 </p>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="display-grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div style="padding: 1.5rem; background: var(--gray-light); border-radius: 4px;">
                         <div style="font-weight: 700; font-size: 0.8rem; color: var(--gray-mid); margin-bottom: 0.5rem;">PAYLOAD</div>
                         <div style="font-size: 1.5rem; font-weight: 800;">5kg / 10kg</div>
@@ -30,11 +32,11 @@
         </div>
 
         <!-- Product 2 -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;">
-            <div style="order: 2;">
-                <img src="/static/img/hero_main.png" alt="Mobile Robot" style="width: 100%; border-radius: 8px;">
+        <div class="feature-row">
+            <div class="feature-image">
+                <img src="/static/img/hero_main.png" alt="Mobile Robot">
             </div>
-            <div style="order: 1;">
+            <div>
                 <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem; color: var(--accent-blue);" data-i18n="prod2-title">Autonomous Mobile Robot</h2>
                 <p style="font-size: 1.2rem; color: var(--gray-mid); margin-bottom: 2rem;" data-i18n="prod2-desc">
                     정밀 지도 제작 및 자율 주행 기술을 바탕으로 물류 이송의 효율을 극대화합니다. 
