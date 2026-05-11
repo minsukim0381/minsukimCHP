@@ -1,14 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap');
 
 :root {
-    --bg-color: #050505; /* Deep Black for more premium feel */
+    --bg-color: #050505;
     --text-color: #ffffff;
     --accent-blue: #0046ff;
     --accent-neon-cyan: #00f3ff;
     --accent-neon-pink: #ff00ff;
     --accent-neon-purple: #bc00ff;
     --gray-light: #1a1a1a;
-    --gray-mid: #888888;
+    --gray-mid: #aaaaaa; /* Lightened for better contrast on black */
     --gray-dark: #111111;
     --border-color: rgba(255, 255, 255, 0.1);
     --glass-bg: rgba(255, 255, 255, 0.03);
@@ -58,7 +58,7 @@ nav {
     justify-content: space-between;
     width: 100%;
     align-items: center;
-    gap: 1rem;
+    gap: 2rem;
 }
 
 .logo {
@@ -184,7 +184,7 @@ nav {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.4);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.8));
 }
 
 .hero-overlay {
@@ -277,19 +277,20 @@ nav {
 
 .logo-strip {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    opacity: 0.5;
+    opacity: 0.6;
     filter: grayscale(1);
     transition: all 0.5s;
     flex-wrap: wrap;
-    gap: 3rem;
+    gap: 2.5rem;
 }
 
 .logo-strip div {
-    font-size: 1.5rem;
+    font-size: 1.1rem;
     font-weight: 800;
-    letter-spacing: -1px;
+    letter-spacing: 1px;
+    white-space: nowrap;
 }
 
 .logo-strip:hover {
@@ -644,13 +645,18 @@ textarea {
     .post-row td:first-child { padding-top: 1.5rem; }
     .post-row td:last-child { padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); }
     .post-row td::before {
-        content: attr(data-label);
-        font-weight: 700;
-        font-size: 0.65rem;
-        text-transform: uppercase;
-        color: var(--accent-neon-cyan);
-        display: block;
-        margin-bottom: 4px;
+        display: none; /* Removed redundant labels for cleaner card view */
+    }
+    
+    .post-row td:first-child {
+        padding-top: 1.2rem;
+        font-size: 1.1rem;
+    }
+    
+    .post-row td:not(:first-child) {
+        display: inline-block;
+        margin-right: 1.5rem;
+        font-size: 0.8rem;
         opacity: 0.7;
     }
     
@@ -699,4 +705,68 @@ textarea {
     .mobile-stack input { width: 100% !important; }
     .responsive-title { font-size: 1.8rem !important; line-height: 1.3 !important; }
     .hero-overlay h1 { font-size: 2.2rem !important; letter-spacing: -1px !important; }
+}
+
+/* --- Feature Row System for Better Mobile Separation --- */
+.feature-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    margin-bottom: 100px;
+}
+
+.feature-image {
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    border: 1px solid var(--border-color);
+}
+
+.feature-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+@media (max-width: 992px) {
+    .feature-row {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+        margin-bottom: 60px;
+    }
+    .feature-row > div {
+        order: 0 !important; /* Reset orders for vertical flow */
+    }
+    .feature-image {
+        height: auto !important;
+        max-height: 400px;
+    }
+    .feature-row h2 {
+        font-size: 2.2rem !important;
+    }
+}
+
+/* --- Advanced Mobile Refinements --- */
+@media (max-width: 600px) {
+    .feature-row { margin-bottom: 40px !important; }
+    .feature-row h2 { font-size: 1.8rem !important; }
+    .feature-row p { font-size: 1rem !important; }
+    
+    /* Stack 2-col inner grids on mobile */
+    .feature-row .display-grid-2 { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
+    
+    .hero-overlay h1 { font-size: 2.2rem !important; letter-spacing: -1px !important; }
+    .btn-cyber { padding: 0.8rem 1.8rem !important; font-size: 0.8rem !important; }
+    
+    .board-header h1 { font-size: 2rem !important; }
+    .category-tabs { margin-bottom: 1.5rem !important; }
+    
+    /* Better Comment Spacing */
+    .comment-vote-btn { padding: 0.4rem 0.8rem !important; min-width: 60px; }
+    .delete-comment-btn, .reply-comment-btn { padding: 0.5rem !important; }
+    
+    /* Mobile Menu Polish */
+    .mobile-nav a { font-size: 1.2rem !important; border-bottom: 1px solid rgba(255,255,255,0.05); width: 80%; text-align: center; padding-bottom: 1rem; }
 }

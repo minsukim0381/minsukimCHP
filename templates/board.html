@@ -12,25 +12,33 @@
     <div class="category-tabs">
         <a href="javascript:void(0)" onclick="loadPosts('')" class="tab active" id="tab-all" data-i18n="tab-all">전체</a>
         <a href="javascript:void(0)" onclick="loadPosts('news')" class="tab" id="tab-news" data-i18n="tab-news">뉴스</a>
-        <a href="javascript:void(0)" onclick="loadPosts('notice')" class="tab" id="tab-notice" data-i18n="tab-notice">공지사항</a>
-        <a href="javascript:void(0)" onclick="loadPosts('tech')" class="tab" id="tab-tech" data-i18n="tab-tech">기술블로그</a>
+        <a href="javascript:void(0)" onclick="loadPosts('notice')" class="tab" id="tab-notice"
+            data-i18n="tab-notice">공지사항</a>
+        <a href="javascript:void(0)" onclick="loadPosts('tech')" class="tab" id="tab-tech"
+            data-i18n="tab-tech">기술블로그</a>
         <a href="javascript:void(0)" onclick="loadPosts('qna')" class="tab" id="tab-qna" data-i18n="tab-qna">Q&A</a>
     </div>
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 1rem; flex-wrap: wrap;">
+    <div
+        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 1rem; flex-wrap: wrap;">
         <div class="search-container" style="display: flex; gap: 0.5rem; flex-grow: 1; max-width: 600px;">
-            <select id="search-type" style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-color); color: var(--text-color); font-size: 0.8rem; min-width: 120px;">
+            <select id="search-type"
+                style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-color); color: var(--text-color); font-size: 0.8rem; min-width: 120px;">
                 <option value="all" data-i18n="search-type-all">제목+내용</option>
                 <option value="title" data-i18n="search-type-title">제목만</option>
                 <option value="content" data-i18n="search-type-content">내용만</option>
                 <option value="author" data-i18n="search-type-author">작성자</option>
                 <option value="comment" data-i18n="search-type-comment">댓글 내용</option>
             </select>
-            <input type="text" id="search-input" data-i18n="search-placeholder" placeholder="검색어를 입력하세요" style="flex-grow: 1; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-color); color: var(--text-color); font-size: 0.8rem;">
-            <button class="btn-cyber" id="btn-search" onclick="loadPosts()" style="padding: 0.5rem 1.5rem; font-size: 0.8rem; flex-shrink: 0; white-space: nowrap;" data-i18n="btn-search">검색</button>
+            <input type="text" id="search-input" data-i18n="search-placeholder" placeholder="검색어를 입력하세요"
+                style="flex-grow: 1; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-color); color: var(--text-color); font-size: 0.8rem;">
+            <button class="btn-cyber" id="btn-search" onclick="loadPosts()"
+                style="padding: 0.5rem 1.5rem; font-size: 0.8rem; flex-shrink: 0; white-space: nowrap;"
+                data-i18n="btn-search">검색</button>
         </div>
         <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <select id="sort-selector" onchange="loadPosts(currentCategory)" style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-color); color: var(--text-color); font-size: 0.8rem;">
+            <select id="sort-selector" onchange="loadPosts(currentCategory)"
+                style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-color); color: var(--text-color); font-size: 0.8rem;">
                 <option value="latest" data-i18n="sort-latest">최신순</option>
                 <option value="oldest" data-i18n="sort-oldest">오래된 순</option>
                 <option value="views" data-i18n="sort-views">조회순</option>
@@ -69,7 +77,7 @@
         const searchQuery = document.getElementById('search-input').value.toLowerCase().trim();
 
         postsBody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 2rem;">${dict['loading']}</td></tr>`;
-        
+
         // Update active tab
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         if (!currentCategory) document.getElementById('tab-all').classList.add('active');
@@ -134,7 +142,7 @@
             });
 
             postsBody.innerHTML = '';
-            
+
             if (posts.length === 0) {
                 const noPostsText = currentLang === 'ko' ? '검색 결과가 없거나 등록된 게시글이 없습니다.' : 'No posts found.';
                 postsBody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 2rem;">${noPostsText}</td></tr>`;
