@@ -6,6 +6,7 @@
     <title>{% block title %}Precision Control Robotics{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -32,12 +33,15 @@
             <nav>
                 <div class="logo" onclick="location.href='/'">PRECISION<span>ROBOTICS</span></div>
                 <ul class="nav-links">
-                    <li><a href="/products">Products</a></li>
-                    <li><a href="/tech">Tech Support</a></li>
-                    <li><a href="/board">Community</a></li>
-                    <li><a href="/about">About</a></li>
+                    <li><a href="/products" data-i18n="nav-products">Products</a></li>
+                    <li><a href="/tech" data-i18n="nav-tech">Tech Support</a></li>
+                    <li><a href="/board" data-i18n="nav-community">Community</a></li>
+                    <li><a href="/about" data-i18n="nav-about">About</a></li>
                 </ul>
-                <button class="btn-cyber" onclick="location.href='/contact'">Contact</button>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <button id="lang-toggle-btn" class="btn-cyber" style="background: transparent; color: var(--text-color); border: 1px solid var(--border-color); font-size: 0.75rem; padding: 0.4rem 0.8rem;" onclick="toggleLanguage()">English</button>
+                    <button class="btn-cyber" data-i18n="nav-contact" onclick="location.href='/contact'">Contact</button>
+                </div>
             </nav>
         </div>
     </header>
@@ -47,7 +51,7 @@
     </main>
 
     <footer>
-        <div class="container" style="padding: 40px 0; border-top: 1px solid var(--border-color); margin-top: 60px; color: var(--gray-mid); font-size: 0.8rem;">
+        <div class="container" style="padding: 40px 0; border-top: 1px solid var(--border-color); margin-top: 60px; color: var(--gray-mid); font-size: 0.8rem;" data-i18n="footer-rights">
             &copy; 2026 Precision Control Robotics. All rights reserved. Powered by Antigravity.
         </div>
     </footer>

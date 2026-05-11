@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DB Reset</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+</head>
+<body>
+    <div id="status">Starting reset...</div>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBDJE9CoS_N8fdtqgHYwDMWPGkFuCIj5zo",
+            authDomain: "minsukim-database-72105.firebaseapp.com",
+            projectId: "minsukim-database-72105",
+            storageBucket: "minsukim-database-72105.firebasestorage.app",
+            messagingSenderId: "532092657612",
+            appId: "1:532092657612:web:a2f8cfb62deb71ce6d4769",
+            measurementId: "G-EZ9Z5RVM9J"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        async function reset() {
+            const status = document.getElementById('status');
+            try {
+                // 1. Delete existing
+                status.innerText = "Deleting existing posts...";
+                const snapshot = await db.collection('posts').get();
+                for (const doc of snapshot.docs) {
+                    // Delete comments sub-collection first
+                    const comments = await doc.ref.collection('comments').get();
+                    for (const cDoc of comments.docs) {
+                        await cDoc.ref.delete();
+                    }
+                    await doc.ref.delete();
+                }
+
+                // 2. Add samples
+                status.innerText = "Adding sample posts...";
+                const samples = [
+                    { category: 'news', title: 'Precision Robotics, 글로벌 시장 진출 가속화', content: '당사의 혁신적인 협동 로봇 제품군이 유럽 시장 인증을 획득하며 글로벌 진출의 발판을 마련했습니다.', author: '익명' },
+                    { category: 'news', title: '신규 자율주행 로봇 AMR-X 출시 안내', content: '최대 1톤 적재가 가능한 고성능 자율주행 로봇 AMR-X가 정식 출시되었습니다.', author: '익명' },
+                    { category: 'notice', title: '커뮤니티 이용 가이드라인 안내', content: '건전한 커뮤니티 문화를 위해 욕설 및 비방글은 예고 없이 삭제될 수 있습니다.', author: '익명' },
+                    { category: 'notice', title: '정기 서버 점검 안내 (5/15)', content: '시스템 안정화를 위해 오는 15일 자정부터 2시간 동안 서버 점검이 진행됩니다.', author: '익명' },
+                    { category: 'tech', title: 'Python SDK를 활용한 로봇 제어 팁', content: '비동기 처리를 통해 다중 로봇을 효율적으로 제어하는 방법을 공유합니다.', author: '익명' },
+                    { category: 'tech', title: 'SLAM 기술의 현재와 미래', content: '자율 주행의 핵심인 SLAM 기술이 어떻게 발전하고 있는지 심층 분석합니다.', author: '익명' },
+                    { category: 'qna', title: 'API 연결 시 타임아웃 에러 해결 방법', content: '네트워크 환경에 따라 발생하는 타임아웃 에러의 권장 설정값입니다.', author: '익명' },
+                    { category: 'qna', title: '커스텀 그리퍼 장착 문의', content: 'X-시리즈 로봇에 타사 커스텀 그리퍼를 장착할 수 있는 어댑터 규격이 궁금합니다.', author: '익명' }
+                ];
+
+                for (const post of samples) {
+                    await db.collection('posts').add({
+                        ...post,
+                        author_id: 'admin_reset',
+                        date_posted: firebase.firestore.Timestamp.now(),
+                        views: Math.floor(Math.random() * 100),
+                        likes: [],
+                        dislikes: [],
+                        vote_score: 0,
+                        password: 'reset'
+                    });
+                }
+
+                status.innerText = "Reset Complete! You can close this tab.";
+                console.log("Success");
+            } catch (e) {
+                status.innerText = "Error: " + e.message;
+                console.error(e);
+            }
+        }
+        reset();
+    </script>
+</body>
+</html>

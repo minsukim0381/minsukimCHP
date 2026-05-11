@@ -4,34 +4,40 @@
 
 {% block content %}
 <div class="container" style="padding: 100px 0; max-width: 800px;">
-    <h1 style="font-size: 3rem; font-weight: 800; margin-bottom: 2rem;">Create New Post</h1>
+    <h1 style="font-size: 3rem; font-weight: 800; margin-bottom: 2rem;" data-i18n="write-title">새 게시글 작성</h1>
     
     <div style="display: flex; flex-direction: column; gap: 1.5rem;">
         <div>
-            <label style="display: block; font-weight: 700; margin-bottom: 0.5rem;">Author Name</label>
-            <input type="text" id="post-author-input" style="width: 100%; padding: 1rem; border: 1px solid var(--border-color); border-radius: 4px;" placeholder="Leave blank for Anonymous">
+            <label style="display: block; font-weight: 700; margin-bottom: 0.5rem;" data-i18n="label-author">작성자 이름</label>
+            <input type="text" id="post-author-input" style="width: 100%; padding: 1rem; border: 1px solid var(--border-color); border-radius: 4px;" data-i18n="placeholder-author" placeholder="비워두면 '익명'으로 표시됩니다">
         </div>
 
         <div>
-            <label style="display: block; font-weight: 700; margin-bottom: 0.5rem;">Title</label>
-            <input type="text" id="post-title" style="width: 100%; padding: 1rem; border: 1px solid var(--border-color); border-radius: 4px;" placeholder="Enter post title">
+            <label style="display: block; font-weight: 700; margin-bottom: 0.5rem;" data-i18n="label-password">삭제 비밀번호</label>
+            <input type="password" id="post-password-input" style="width: 100%; padding: 1rem; border: 1px solid var(--border-color); border-radius: 4px;" data-i18n="placeholder-password" placeholder="삭제 시 사용할 비밀번호를 입력하세요">
+        </div>
+
+        <div>
+            <label style="display: block; font-weight: 700; margin-bottom: 0.5rem;" data-i18n="label-title">제목</label>
+            <input type="text" id="post-title" style="width: 100%; padding: 1rem; border: 1px solid var(--border-color); border-radius: 4px;" data-i18n="placeholder-title" placeholder="제목을 입력하세요">
         </div>
         
         <div>
-            <label style="display: block; font-weight: 700; margin-bottom: 0.5rem;">Category</label>
+            <label style="display: block; font-weight: 700; margin-bottom: 0.5rem;" data-i18n="label-category">카테고리</label>
             <select id="post-category" style="width: 100%; padding: 1rem; border: 1px solid var(--border-color); border-radius: 4px;">
-                <option value="notice">Notice</option>
-                <option value="tech">Tech Blog</option>
-                <option value="qna">Q&A</option>
+                <option value="news" data-i18n="tab-news">News</option>
+                <option value="notice" data-i18n="tab-notice">Notice</option>
+                <option value="tech" data-i18n="tab-tech">Tech Blog</option>
+                <option value="qna" data-i18n="tab-qna">Q&A</option>
             </select>
         </div>
 
         <div>
-            <label style="display: block; font-weight: 700; margin-bottom: 0.5rem;">Content (Markdown supported)</label>
-            <textarea id="post-content" style="width: 100%; height: 400px; padding: 1rem; border: 1px solid var(--border-color); border-radius: 4px; font-family: inherit;" placeholder="Write your content here..."></textarea>
+            <label style="display: block; font-weight: 700; margin-bottom: 0.5rem;" data-i18n="label-content">내용 (마크다운 지원)</label>
+            <textarea id="post-content" style="width: 100%; height: 400px; padding: 1rem; border: 1px solid var(--border-color); border-radius: 4px; font-family: inherit;" data-i18n="placeholder-content" placeholder="내용을 입력하세요..."></textarea>
         </div>
 
-        <button class="btn-cyber" id="submit-btn" onclick="submitPost()">Publish Post</button>
+        <button class="btn-cyber" id="submit-btn" data-i18n="btn-publish" onclick="submitPost()">게시글 등록</button>
     </div>
 </div>
 {% endblock %}
@@ -39,12 +45,20 @@
 {% block scripts %}
 <script>
     async function submitPost() {
+        const currentLang = localStorage.getItem('preferred_lang') || 'ko';
+        const dict = translations[currentLang];
         const authorInput = document.getElementById('post-author-input').value.trim();
-        const authorName = authorInput || '익명';
+        const authorName = authorInput || dict['anonymous'];
+        const password = document.getElementById('post-password-input').value;
         const title = document.getElementById('post-title').value;
         const category = document.getElementById('post-category').value;
         const content = document.getElementById('post-content').value;
         const btn = document.getElementById('submit-btn');
+
+        if (!title || !password || !content) {
+            alert(dict['alert-title-password']);
+            return;
+        }
 
         let userId = localStorage.getItem('robot_site_userid');
         if (!userId) {
@@ -52,13 +66,8 @@
             localStorage.setItem('robot_site_userid', userId);
         }
 
-        if (!title || !content) {
-            alert('Please fill in both title and content.');
-            return;
-        }
-
         btn.disabled = true;
-        btn.innerText = 'Publishing...';
+        btn.innerText = dict['publish-loading'];
 
         try {
             await db.collection('posts').add({
@@ -67,18 +76,20 @@
                 content,
                 author: authorName,
                 author_id: userId,
+                password: password,
                 date_posted: firebase.firestore.Timestamp.now(),
                 views: 0,
                 likes: [],
-                dislikes: []
+                dislikes: [],
+                vote_score: 0
             });
-            alert('Post published successfully!');
+            alert(dict['publish-success']);
             location.href = '/board';
         } catch (error) {
             console.error("Error publishing post:", error);
-            alert('Error publishing post: ' + error.message);
+            alert((currentLang === 'ko' ? '오류 발생: ' : 'Error: ') + error.message);
             btn.disabled = false;
-            btn.innerText = 'Publish Post';
+            btn.innerText = dict['btn-publish'];
         }
     }
 </script>

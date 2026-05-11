@@ -319,12 +319,29 @@ nav {
 }
 
 @keyframes glitch {
-    0% { transform: translate(0); }
-    20% { transform: translate(-2px, 2px); }
-    40% { transform: translate(-2px, -2px); }
-    60% { transform: translate(2px, 2px); }
-    80% { transform: translate(2px, -2px); }
-    100% { transform: translate(0); }
+    0% {
+        transform: translate(0);
+    }
+
+    20% {
+        transform: translate(-2px, 2px);
+    }
+
+    40% {
+        transform: translate(-2px, -2px);
+    }
+
+    60% {
+        transform: translate(2px, 2px);
+    }
+
+    80% {
+        transform: translate(2px, -2px);
+    }
+
+    100% {
+        transform: translate(0);
+    }
 }
 
 /* --- Post Detail --- */
@@ -362,7 +379,9 @@ nav {
     gap: 1rem;
 }
 
-input[type="text"], textarea, select {
+input[type="text"],
+textarea,
+select {
     width: 100%;
     padding: 1rem;
     border: 1px solid var(--border-color);
@@ -378,7 +397,8 @@ textarea {
 .ai-draft-box {
     margin-top: 2rem;
     padding: 1.5rem;
-    background: #fdf2f8; /* Very light pink */
+    background: #fdf2f8;
+    /* Very light pink */
     border-left: 4px solid var(--accent-neon-pink);
 }
 
@@ -398,26 +418,33 @@ textarea {
         text-align: center;
         padding: 60px 0;
     }
+
     .hero-content h1 {
         font-size: 2.5rem;
     }
+
     .nav-links {
         display: none;
     }
+
     .post-table thead {
         display: none;
     }
+
     .post-row td {
         display: block;
         padding: 0.5rem 1rem;
     }
+
     .post-row td:first-child {
         padding-top: 1.5rem;
     }
+
     .post-row td:last-child {
         padding-bottom: 1.5rem;
         border-bottom: 1px solid var(--border-color);
     }
+
     .post-row td::before {
         content: attr(data-label);
         font-weight: 700;
