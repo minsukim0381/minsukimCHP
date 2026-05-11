@@ -39,6 +39,12 @@
         const content = document.getElementById('post-content').value;
         const btn = document.getElementById('submit-btn');
 
+        let userId = localStorage.getItem('robot_site_userid');
+        if (!userId) {
+            userId = 'user_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('robot_site_userid', userId);
+        }
+
         if (!title || !content) {
             alert('Please fill in both title and content.');
             return;
@@ -53,8 +59,11 @@
                 category,
                 content,
                 author: 'Admin',
+                author_id: userId,
                 date_posted: firebase.firestore.Timestamp.now(),
-                views: 0
+                views: 0,
+                likes: [],
+                dislikes: []
             });
             alert('Post published successfully!');
             location.href = '/board';

@@ -4,29 +4,83 @@
 
 {% block content %}
 <div class="container" style="padding: 100px 0; max-width: 800px;">
-    <a href="/board" style="text-decoration: none; color: var(--accent-blue); font-weight: 600; margin-bottom: 2rem; display: inline-block;">← Back to List</a>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <a href="/board" style="text-decoration: none; color: var(--accent-blue); font-weight: 600;">← Back to List</a>
+        <button id="delete-btn" class="btn-cyber" style="background: transparent; border: 1px solid #ff4d4d; color: #ff4d4d; padding: 0.5rem 1rem; font-size: 0.8rem; display: none;" onclick="deletePost()">Delete Post</button>
+    </div>
     
     <div id="loading-spinner" style="text-align: center; padding: 4rem;">Loading post...</div>
     
     <div id="post-container" style="display: none;">
         <h1 id="post-title" style="font-size: 3rem; font-weight: 800; margin-bottom: 1.5rem;"></h1>
         
-        <div style="display: flex; gap: 1rem; color: var(--gray-mid); margin-bottom: 3rem; font-size: 0.9rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
-            <span id="post-author"></span>
-            <span>|</span>
-            <span id="post-date"></span>
-            <span>|</span>
-            <span>Views: <span id="post-views"></span></span>
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem;">
+            <div style="display: flex; gap: 1rem; color: var(--gray-mid); font-size: 0.9rem;">
+                <span id="post-author"></span>
+                <span>|</span>
+                <span id="post-date"></span>
+                <span>|</span>
+                <span>Views: <span id="post-views"></span></span>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button id="like-btn" class="vote-btn" onclick="vote('like')">
+                    👍 <span id="like-count">0</span>
+                </button>
+                <button id="dislike-btn" class="vote-btn" onclick="vote('dislike')">
+                    👎 <span id="dislike-count">0</span>
+                </button>
+            </div>
         </div>
 
         <div id="post-content-body" style="font-size: 1.15rem; line-height: 1.8; margin-bottom: 60px;"></div>
+
+        <!-- Comments Section -->
+        <div style="border-top: 1px solid var(--border-color); padding-top: 40px;">
+            <h3 style="font-size: 1.5rem; margin-bottom: 2rem;">Comments (<span id="comment-count">0</span>)</h3>
+            
+            <div style="margin-bottom: 3rem;">
+                <textarea id="comment-input" style="width: 100%; height: 100px; padding: 1rem; border: 1px solid var(--border-color); border-radius: 4px; margin-bottom: 1rem;" placeholder="Add a comment..."></textarea>
+                <div style="display: flex; justify-content: flex-end;">
+                    <button class="btn-cyber" onclick="addComment()">Post Comment</button>
+                </div>
+            </div>
+
+            <div id="comments-list" style="display: flex; flex-direction: column; gap: 2rem;">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
     </div>
 </div>
+
+<style>
+    .vote-btn {
+        background: var(--gray-light);
+        border: 1px solid var(--border-color);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+    .vote-btn.active-like { background: #e6f3ff; border-color: var(--accent-blue); color: var(--accent-blue); }
+    .vote-btn.active-dislike { background: #fff0f0; border-color: #ff4d4d; color: #ff4d4d; }
+    
+    .comment-item {
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--gray-light);
+    }
+</style>
 {% endblock %}
 
 {% block scripts %}
 <script>
     const postId = "{{ post_id }}";
+    let userId = localStorage.getItem('robot_site_userid');
+    if (!userId) {
+        userId = 'user_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('robot_site_userid', userId);
+    }
 
     async function loadPostDetail() {
         try {
@@ -42,7 +96,21 @@
             document.getElementById('post-title').innerText = post.title;
             document.getElementById('post-author').innerText = post.author || 'Admin';
             document.getElementById('post-date').innerText = post.date_posted.toDate().toLocaleString();
-            document.getElementById('post-views').innerText = (post.views || 0) + 1;
+            document.getElementById('post-views').innerText = (post.views || 0);
+            
+            // Voting UI
+            const likes = post.likes || [];
+            const dislikes = post.dislikes || [];
+            document.getElementById('like-count').innerText = likes.length;
+            document.getElementById('dislike-count').innerText = dislikes.length;
+            
+            if (likes.includes(userId)) document.getElementById('like-btn').classList.add('active-like');
+            if (dislikes.includes(userId)) document.getElementById('dislike-btn').classList.add('active-dislike');
+
+            // Show delete button if author (simplified logic)
+            if (post.author_id === userId || post.author === 'Admin') {
+                document.getElementById('delete-btn').style.display = 'block';
+            }
             
             const contentBody = document.getElementById('post-content-body');
             contentBody.innerHTML = marked.parse(post.content);
@@ -55,9 +123,97 @@
                 views: firebase.firestore.FieldValue.increment(1)
             });
 
+            loadComments();
+
         } catch (error) {
             console.error("Error loading post:", error);
-            document.getElementById('loading-spinner').innerHTML = 'Error loading post. Please check console.';
+            document.getElementById('loading-spinner').innerHTML = 'Error loading post.';
+        }
+    }
+
+    async function vote(type) {
+        const docRef = db.collection('posts').doc(postId);
+        const doc = await docRef.get();
+        const post = doc.data();
+        let likes = post.likes || [];
+        let dislikes = post.dislikes || [];
+
+        if (type === 'like') {
+            if (likes.includes(userId)) {
+                likes = likes.filter(id => id !== userId);
+            } else {
+                likes.push(userId);
+                dislikes = dislikes.filter(id => id !== userId);
+            }
+        } else {
+            if (dislikes.includes(userId)) {
+                dislikes = dislikes.filter(id => id !== userId);
+            } else {
+                dislikes.push(userId);
+                likes = likes.filter(id => id !== userId);
+            }
+        }
+
+        await docRef.update({ likes, dislikes });
+        
+        // Update UI
+        document.getElementById('like-count').innerText = likes.length;
+        document.getElementById('dislike-count').innerText = dislikes.length;
+        document.getElementById('like-btn').classList.toggle('active-like', likes.includes(userId));
+        document.getElementById('dislike-btn').classList.toggle('active-dislike', dislikes.includes(userId));
+    }
+
+    async function loadComments() {
+        const list = document.getElementById('comments-list');
+        const countSpan = document.getElementById('comment-count');
+        
+        const snapshot = await db.collection('posts').doc(postId).collection('comments')
+            .orderBy('date_posted', 'desc').get();
+        
+        list.innerHTML = '';
+        countSpan.innerText = snapshot.size;
+
+        snapshot.forEach(doc => {
+            const c = doc.data();
+            list.innerHTML += `
+                <div class="comment-item">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 700;">${c.author}</span>
+                        <span style="font-size: 0.8rem; color: var(--gray-mid);">${c.date_posted.toDate().toLocaleString()}</span>
+                    </div>
+                    <p style="margin: 0; color: #444;">${c.content}</p>
+                </div>
+            `;
+        });
+    }
+
+    async function addComment() {
+        const input = document.getElementById('comment-input');
+        const content = input.value.trim();
+        if (!content) return;
+
+        await db.collection('posts').doc(postId).collection('comments').add({
+            author: 'User_' + userId.substr(-4),
+            author_id: userId,
+            content: content,
+            date_posted: firebase.firestore.Timestamp.now()
+        });
+
+        input.value = '';
+        loadComments();
+    }
+
+    async function deletePost() {
+        if (!confirm('Are you sure you want to delete this post?')) return;
+        
+        // For simplicity, we allow deleting if author_id matches or if Admin
+        // In a real app, this would be handled by Firebase Security Rules
+        try {
+            await db.collection('posts').doc(postId).delete();
+            alert('Post deleted.');
+            location.href = '/board';
+        } catch (e) {
+            alert('Error deleting post: ' + e.message);
         }
     }
 
