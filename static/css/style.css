@@ -623,15 +623,14 @@ textarea {
 @media (max-width: 992px) {
     .hero-overlay h1 { font-size: 3.5rem; }
     .product-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .nav-links { display: none; }
+    .mobile-menu-toggle { display: flex; }
 }
 
 @media (max-width: 768px) {
     .container { padding: 0 1.5rem; }
     .hero-overlay h1 { font-size: 2.8rem; letter-spacing: -1px; }
     .hero-overlay p { font-size: 1rem; }
-    
-    .nav-links { display: none; }
-    .mobile-menu-toggle { display: flex; }
     
     .business-grid { grid-template-columns: 1fr; }
     .business-card { height: 350px; }
@@ -769,4 +768,10 @@ textarea {
     
     /* Mobile Menu Polish */
     .mobile-nav a { font-size: 1.2rem !important; border-bottom: 1px solid rgba(255,255,255,0.05); width: 80%; text-align: center; padding-bottom: 1rem; }
+}
+
+/* --- Aspect Ratio based Mobile Menu --- */
+@media (max-aspect-ratio: 1/1) {
+    .nav-links { display: none !important; }
+    .mobile-menu-toggle { display: flex !important; }
 }
