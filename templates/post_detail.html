@@ -492,14 +492,9 @@
                     <img id="reply-image-preview-${commentId}" src="" style="width: 100%; border-radius: 4px; border: 1px solid var(--border-color);" alt="Preview">
                     <button type="button" style="position: absolute; top: 1px; right: 1px; background: rgba(0,0,0,0.7); border: none; border-radius: 50%; color: white; width: 16px; height: 16px; cursor: pointer; font-size: 0.5rem; display: flex; justify-content: center; align-items: center;" onclick="clearReplyUploadedImage('${commentId}')">✕</button>
                 </div>
-
                 <div style="display: flex; gap: 0.3rem; width: 100%;">
                     <textarea id="reply-content-${commentId}" style="flex: 1; min-height: 26px; height: 26px; padding: 0.3rem 0.6rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 4px; color: white; font-size: 0.8rem; resize: none; font-family: inherit; line-height: 1.4; overflow: hidden;" placeholder="${dict['reply-placeholder']}" data-i18n="reply-placeholder" oninput="this.style.height = '26px'; this.style.height = this.scrollHeight + 'px'"></textarea>
                     <button class="btn-cyber" style="padding: 0 0.8rem; font-size: 0.7rem; height: 26px;" onclick="addComment('${commentId}')" data-i18n="btn-comment">${dict['btn-comment']}</button>
-                </div>
-            </div>`;
-        container.style.display = 'block';
-    }lick="addComment('${commentId}')">등록</button>
                 </div>
             </div>`;
         container.style.display = 'block';
