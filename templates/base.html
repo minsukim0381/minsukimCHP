@@ -111,6 +111,14 @@
                     scrollTopBtn.classList.remove('show');
                 }
             });
+
+            // Navigation Active State Highlight
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.nav-links a, #mobile-nav a').forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
         });
 
         function toggleMobileMenu() {
