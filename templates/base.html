@@ -64,6 +64,10 @@
         {% block content %}{% endblock %}
     </main>
 
+    <div id="btn-scroll-top" class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        ▲
+    </div>
+
     <footer>
         <div class="container" style="padding: 40px 0; border-top: 1px solid var(--border-color); margin-top: 60px; color: var(--gray-mid); font-size: 0.8rem;" data-i18n="footer-rights">
             &copy; 2026 Precision Control Robotics. All rights reserved. Powered by Antigravity.
@@ -96,6 +100,16 @@
 
             mobileToggle.addEventListener('click', () => {
                 toggleMobileMenu();
+            });
+
+            // Scroll to Top Logic
+            const scrollTopBtn = document.getElementById('btn-scroll-top');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    scrollTopBtn.classList.add('show');
+                } else {
+                    scrollTopBtn.classList.remove('show');
+                }
             });
         });
 

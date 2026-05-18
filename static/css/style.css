@@ -826,3 +826,50 @@ textarea {
         padding: 0 1rem !important;
     }
 }
+
+/* --- Scroll Reveal Animations --- */
+.reveal-hidden {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.reveal-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* --- Floating Scroll-To-Top Button --- */
+.scroll-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    background: rgba(5, 5, 5, 0.85);
+    border: 1px solid var(--accent-neon-cyan);
+    border-radius: 50%;
+    color: var(--accent-neon-cyan);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+}
+
+.scroll-to-top.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.scroll-to-top:hover {
+    background: var(--accent-neon-cyan);
+    color: #000;
+    box-shadow: 0 0 25px var(--accent-neon-cyan);
+    transform: translateY(-5px);
+}

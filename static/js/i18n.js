@@ -313,6 +313,7 @@ function setLanguage(lang) {
 
 function applyTranslations() {
     const lang = localStorage.getItem('preferred_lang') || 'ko';
+    document.documentElement.lang = lang;
     const dict = translations[lang];
 
     document.querySelectorAll('[data-i18n]').forEach(el => {
