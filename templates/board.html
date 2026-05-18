@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container" style="padding: 100px 0;">
     <div class="board-header">
-        <h1 style="font-size: 3rem; font-weight: 800;" data-i18n="board-title">소식 및 커뮤니티</h1>
+        <h1 style="font-size: clamp(1.8rem, 6vw, 3rem); font-weight: 800;" data-i18n="board-title">소식 및 커뮤니티</h1>
         <button class="btn-cyber" data-i18n="btn-write" onclick="location.href='/write'">글쓰기</button>
     </div>
 
@@ -144,7 +144,7 @@
             postsBody.innerHTML = '';
 
             if (posts.length === 0) {
-                const noPostsText = currentLang === 'ko' ? '검색 결과가 없거나 등록된 게시글이 없습니다.' : 'No posts found.';
+                const noPostsText = dict['no-posts-found'];
                 postsBody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 2rem;">${noPostsText}</td></tr>`;
                 return;
             }

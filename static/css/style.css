@@ -24,17 +24,23 @@
     box-sizing: border-box;
 }
 
+html, body {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
+}
+
 body {
     font-family: var(--font-primary);
     background-color: var(--bg-color);
     color: var(--text-color);
     line-height: 1.6;
-    overflow-x: hidden;
     scroll-behavior: smooth;
 }
 
 /* --- Layout --- */
 .container {
+    width: 100%;
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 2rem;
@@ -805,4 +811,18 @@ textarea {
 @media (max-aspect-ratio: 1/1) {
     .nav-links { display: none !important; }
     .mobile-menu-toggle { display: flex !important; }
+}
+
+/* --- Extreme Mobile Optimization (< 480px) --- */
+@media (max-width: 480px) {
+    .logo {
+        font-size: 1.15rem !important;
+        letter-spacing: -0.5px !important;
+    }
+    nav {
+        gap: 0.5rem !important;
+    }
+    .container {
+        padding: 0 1rem !important;
+    }
 }

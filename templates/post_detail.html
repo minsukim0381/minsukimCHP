@@ -41,12 +41,27 @@
                 <h3 style="font-size: 1.1rem; margin: 0;"><span data-i18n="label-comments">댓글</span> (<span id="comment-count">0</span>)</h3>
             </div>
             
-            <div class="comment-input-bar">
-                <div style="display: flex; gap: 0.4rem;">
-                    <input type="text" id="comment-author-input" style="width: 90px; padding: 0.4rem 0.6rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: white; font-size: 0.75rem;" data-i18n="label-your-name" placeholder="이름">
-                    <input type="password" id="comment-password-input" style="width: 90px; padding: 0.4rem 0.6rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: white; font-size: 0.75rem;" data-i18n="comment-password" placeholder="비번">
+            <div class="comment-input-bar" style="display: flex; flex-direction: column; gap: 0.8rem; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); padding: 1.2rem; border-radius: 12px; margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; width: 100%;">
+                    <div style="display: flex; gap: 0.4rem;">
+                        <input type="text" id="comment-author-input" style="width: 90px; padding: 0.4rem 0.6rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: white; font-size: 0.75rem;" data-i18n="label-your-name" placeholder="이름">
+                        <input type="password" id="comment-password-input" style="width: 90px; padding: 0.4rem 0.6rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: white; font-size: 0.75rem;" data-i18n="comment-password" placeholder="비번">
+                    </div>
+                    
+                    <!-- Comment image upload -->
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="file" id="comment-image-input" accept="image/*" style="display: none;" onchange="handleCommentImageUpload(this)">
+                        <button type="button" class="btn-cyber" style="background: transparent; border: 1px solid var(--accent-neon-cyan); color: var(--accent-neon-cyan); padding: 0.3rem 0.8rem; font-size: 0.7rem; border-radius: 4px;" onclick="document.getElementById('comment-image-input').click()" data-i18n="btn-add-photo">📷 사진 추가</button>
+                        <span id="comment-image-filename" style="color: var(--gray-mid); font-size: 0.75rem; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" data-i18n="no-file-selected">선택된 파일 없음</span>
+                    </div>
                 </div>
-                <div style="flex: 1; display: flex; gap: 0.4rem;">
+                
+                <div id="comment-image-preview-container" style="display: none; position: relative; max-width: 150px; margin-top: 0.2rem;">
+                    <img id="comment-image-preview" src="" style="width: 100%; border-radius: 6px; border: 1px solid var(--border-color);" alt="Preview">
+                    <button type="button" style="position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.7); border: none; border-radius: 50%; color: white; width: 20px; height: 20px; cursor: pointer; font-size: 0.6rem; display: flex; justify-content: center; align-items: center;" onclick="clearCommentUploadedImage()">✕</button>
+                </div>
+                
+                <div style="display: flex; gap: 0.4rem; width: 100%;">
                     <textarea id="comment-input" style="flex: 1; min-height: 32px; height: 32px; padding: 0.4rem 0.8rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: white; font-size: 0.85rem; resize: none; font-family: inherit; line-height: 1.4; overflow: hidden;" data-i18n="placeholder-comment" placeholder="댓글을 입력하세요..." oninput="this.style.height = '32px'; this.style.height = this.scrollHeight + 'px'"></textarea>
                     <button class="btn-cyber" style="padding: 0 1.2rem; font-size: 0.75rem; white-space: nowrap; height: 32px;" data-i18n="btn-comment" onclick="addComment()">등록</button>
                 </div>
@@ -176,6 +191,99 @@
         });
     }
 
+    let uploadedCommentImageUrl = "";
+    let replyImages = {};
+
+    async function handleCommentImageUpload(input) {
+        const currentLang = localStorage.getItem('preferred_lang') || 'ko';
+        const dict = translations[currentLang];
+        if (!input.files || !input.files[0]) return;
+        const file = input.files[0];
+        document.getElementById('comment-image-filename').removeAttribute('data-i18n');
+        document.getElementById('comment-image-filename').innerText = file.name;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            document.getElementById('comment-image-filename').innerText = dict['uploading'];
+            const res = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            if (data.url) {
+                uploadedCommentImageUrl = data.url;
+                document.getElementById('comment-image-filename').innerText = file.name;
+                document.getElementById('comment-image-preview').src = data.url;
+                document.getElementById('comment-image-preview-container').style.display = 'block';
+            } else {
+                alert(dict['upload-failed'] + (data.error || ""));
+                clearCommentUploadedImage();
+            }
+        } catch (e) {
+            console.error("Upload error:", e);
+            alert(dict['upload-error']);
+            clearCommentUploadedImage();
+        }
+    }
+
+    function clearCommentUploadedImage() {
+        const currentLang = localStorage.getItem('preferred_lang') || 'ko';
+        const dict = translations[currentLang];
+        uploadedCommentImageUrl = "";
+        document.getElementById('comment-image-input').value = "";
+        document.getElementById('comment-image-filename').setAttribute('data-i18n', 'no-file-selected');
+        document.getElementById('comment-image-filename').innerText = dict['no-file-selected'];
+        document.getElementById('comment-image-preview-container').style.display = 'none';
+        document.getElementById('comment-image-preview').src = "";
+    }
+
+    async function handleReplyImageUpload(commentId, input) {
+        const currentLang = localStorage.getItem('preferred_lang') || 'ko';
+        const dict = translations[currentLang];
+        if (!input.files || !input.files[0]) return;
+        const file = input.files[0];
+        document.getElementById(`reply-image-filename-${commentId}`).removeAttribute('data-i18n');
+        document.getElementById(`reply-image-filename-${commentId}`).innerText = file.name;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            document.getElementById(`reply-image-filename-${commentId}`).innerText = dict['uploading'];
+            const res = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            if (data.url) {
+                replyImages[commentId] = data.url;
+                document.getElementById(`reply-image-filename-${commentId}`).innerText = file.name;
+                document.getElementById(`reply-image-preview-${commentId}`).src = data.url;
+                document.getElementById(`reply-image-preview-container-${commentId}`).style.display = 'block';
+            } else {
+                alert(dict['upload-failed'] + (data.error || ""));
+                clearReplyUploadedImage(commentId);
+            }
+        } catch (e) {
+            console.error("Upload error:", e);
+            alert(dict['upload-error']);
+            clearReplyUploadedImage(commentId);
+        }
+    }
+
+    function clearReplyUploadedImage(commentId) {
+        const currentLang = localStorage.getItem('preferred_lang') || 'ko';
+        const dict = translations[currentLang];
+        delete replyImages[commentId];
+        document.getElementById(`reply-image-input-${commentId}`).value = "";
+        document.getElementById(`reply-image-filename-${commentId}`).setAttribute('data-i18n', 'no-file-selected');
+        document.getElementById(`reply-image-filename-${commentId}`).innerText = dict['no-file-selected'];
+        document.getElementById(`reply-image-preview-container-${commentId}`).style.display = 'none';
+        document.getElementById(`reply-image-preview-${commentId}`).src = "";
+    }
+
     async function loadPostDetail() {
         try {
             const docRef = db.collection('posts').doc(postId);
@@ -209,6 +317,12 @@
             
             const contentBody = document.getElementById('post-content-body');
             contentBody.innerHTML = marked.parse(post.content);
+            if (post.image_url) {
+                const imgContainer = document.createElement('div');
+                imgContainer.style.marginBottom = '2rem';
+                imgContainer.innerHTML = `<img src="${post.image_url}" style="max-width: 100%; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.3); cursor: pointer;" onclick="window.open('${post.image_url}', '_blank')" alt="Attached Image">`;
+                contentBody.insertBefore(imgContainer, contentBody.firstChild);
+            }
             
             document.getElementById('loading-spinner').style.display = 'none';
             document.getElementById('post-container').style.display = 'block';
@@ -336,6 +450,11 @@
                 </div>
             </div>
             <p style="margin: 0 0 1rem 0; color: var(--gray-mid); font-size: ${isReply ? '0.9rem' : '1rem'}; line-height: 1.5; white-space: pre-wrap; word-break: break-word;">${c.content}</p>
+            ${c.image_url ? `
+                <div style="margin-bottom: 1rem; max-width: 300px;">
+                    <img src="${c.image_url}" style="width: 100%; border-radius: 8px; border: 1px solid var(--border-color); cursor: pointer;" onclick="window.open('${c.image_url}', '_blank')" alt="Comment Image">
+                </div>
+            ` : ''}
             <div style="display: flex; gap: 1.2rem; align-items: center; flex-wrap: wrap;">
                 <button class="comment-vote-btn ${isLiked ? 'active-like' : ''}" data-id="${c.id}" data-type="like" style="font-size: 0.75rem;">
                     👍 <span>${likes.length}</span>
@@ -356,11 +475,32 @@
         const currentLang = localStorage.getItem('preferred_lang') || 'ko';
         const dict = translations[currentLang];
         container.innerHTML = `
-            <div class="mobile-stack" style="margin-top: 0.6rem; display: flex; gap: 0.3rem; align-items: flex-end; background: rgba(255,255,255,0.01); padding: 0.4rem; border-radius: 4px; border: 1px solid rgba(0,243,255,0.1);">
-                <input type="text" id="reply-author-${commentId}" style="width: 80px; padding: 0.3rem 0.5rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 4px; color: white; font-size: 0.7rem;" placeholder="Name">
-                <input type="password" id="reply-pass-${commentId}" style="width: 80px; padding: 0.3rem 0.5rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 4px; color: white; font-size: 0.7rem;" placeholder="Pass">
-                <textarea id="reply-content-${commentId}" style="flex: 1; min-height: 26px; height: 26px; padding: 0.3rem 0.6rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 4px; color: white; font-size: 0.8rem; resize: none; font-family: inherit; line-height: 1.4; overflow: hidden;" placeholder="Write a reply..." oninput="this.style.height = '26px'; this.style.height = this.scrollHeight + 'px'"></textarea>
-                <button class="btn-cyber" style="padding: 0 0.8rem; font-size: 0.7rem; height: 26px;" onclick="addComment('${commentId}')">등록</button>
+            <div class="mobile-stack" style="margin-top: 0.6rem; display: flex; flex-direction: column; gap: 0.6rem; background: rgba(255,255,255,0.01); padding: 0.8rem; border-radius: 8px; border: 1px solid rgba(0,243,255,0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 0.5rem;">
+                    <div style="display: flex; gap: 0.3rem;">
+                        <input type="text" id="reply-author-${commentId}" style="width: 80px; padding: 0.3rem 0.5rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 4px; color: white; font-size: 0.7rem;" placeholder="${dict['placeholder-name']}" data-i18n="placeholder-name">
+                        <input type="password" id="reply-pass-${commentId}" style="width: 80px; padding: 0.3rem 0.5rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 4px; color: white; font-size: 0.7rem;" placeholder="${dict['placeholder-pass']}" data-i18n="placeholder-pass">
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.4rem;">
+                        <input type="file" id="reply-image-input-${commentId}" accept="image/*" style="display: none;" onchange="handleReplyImageUpload('${commentId}', this)">
+                        <button type="button" class="btn-cyber" style="background: transparent; border: 1px solid var(--accent-neon-cyan); color: var(--accent-neon-cyan); padding: 0.2rem 0.6rem; font-size: 0.65rem; border-radius: 4px;" onclick="document.getElementById('reply-image-input-${commentId}').click()" data-i18n="btn-add-photo">${dict['btn-add-photo']}</button>
+                        <span id="reply-image-filename-${commentId}" style="color: var(--gray-mid); font-size: 0.7rem; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" data-i18n="no-file-selected">${dict['no-file-selected']}</span>
+                    </div>
+                </div>
+                
+                <div id="reply-image-preview-container-${commentId}" style="display: none; position: relative; max-width: 100px; margin-top: 0.2rem;">
+                    <img id="reply-image-preview-${commentId}" src="" style="width: 100%; border-radius: 4px; border: 1px solid var(--border-color);" alt="Preview">
+                    <button type="button" style="position: absolute; top: 1px; right: 1px; background: rgba(0,0,0,0.7); border: none; border-radius: 50%; color: white; width: 16px; height: 16px; cursor: pointer; font-size: 0.5rem; display: flex; justify-content: center; align-items: center;" onclick="clearReplyUploadedImage('${commentId}')">✕</button>
+                </div>
+
+                <div style="display: flex; gap: 0.3rem; width: 100%;">
+                    <textarea id="reply-content-${commentId}" style="flex: 1; min-height: 26px; height: 26px; padding: 0.3rem 0.6rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 4px; color: white; font-size: 0.8rem; resize: none; font-family: inherit; line-height: 1.4; overflow: hidden;" placeholder="${dict['reply-placeholder']}" data-i18n="reply-placeholder" oninput="this.style.height = '26px'; this.style.height = this.scrollHeight + 'px'"></textarea>
+                    <button class="btn-cyber" style="padding: 0 0.8rem; font-size: 0.7rem; height: 26px;" onclick="addComment('${commentId}')" data-i18n="btn-comment">${dict['btn-comment']}</button>
+                </div>
+            </div>`;
+        container.style.display = 'block';
+    }lick="addComment('${commentId}')">등록</button>
+                </div>
             </div>`;
         container.style.display = 'block';
     }
@@ -403,11 +543,25 @@
         const dict = translations[currentLang];
         const masterPass = "20041105";
 
-        const inputPassword = await showCyberModal(dict['nav-community'], dict['delete-confirm'], true);
-        if (inputPassword === null) return;
-
-        let authorized = false;
         try {
+            const docRef = db.collection('posts').doc(postId).collection('comments').doc(commentId);
+            const doc = await docRef.get();
+            
+            if (!doc.exists) {
+                console.error("Comment document does not exist:", commentId);
+                return;
+            }
+
+            const comment = doc.data();
+            const isReply = !!comment.parent_id;
+
+            // Prompt title and content based on comment/reply
+            const promptMsg = isReply ? dict['reply-delete-pass-prompt'] : dict['comment-delete-pass-prompt'];
+
+            const inputPassword = await showCyberModal(dict['nav-community'], promptMsg, true);
+            if (inputPassword === null) return;
+
+            let authorized = false;
             if (inputPassword === masterPass) {
                 if (await showCyberModal(dict['master-approval-title'], dict['master-approval-msg'])) {
                     authorized = true;
@@ -415,16 +569,6 @@
                     return;
                 }
             } else {
-                const docRef = db.collection('posts').doc(postId).collection('comments').doc(commentId);
-                const doc = await docRef.get();
-                
-                if (!doc.exists) {
-                    console.error("Comment document does not exist:", commentId);
-                    return;
-                }
-
-                const comment = doc.data();
-                
                 if (comment.password && comment.password.trim() !== "") {
                     if (comment.password === inputPassword) {
                         authorized = true;
@@ -443,9 +587,15 @@
             }
 
             if (authorized) {
-                await db.collection('posts').doc(postId).collection('comments').doc(commentId).delete();
-                alert(dict['comment-delete-success']);
-                loadComments();
+                // "삭제하시겠습니까?" Confirmation Step
+                const confirmMsg = isReply ? dict['reply-delete-prompt'] : dict['comment-delete-prompt'];
+                
+                const confirmDelete = await showCyberModal(dict['nav-community'], confirmMsg, false);
+                if (confirmDelete) {
+                    await docRef.delete();
+                    alert(isReply ? dict['reply-delete-success-alert'] : dict['comment-delete-success-alert']);
+                    loadComments();
+                }
             }
         } catch (error) {
             console.error("Error deleting comment:", error);
@@ -456,35 +606,45 @@
     async function addComment(parentId = null) {
         const currentLang = localStorage.getItem('preferred_lang') || 'ko';
         const dict = translations[currentLang];
-        let author, pass, content, contentInput;
+        let author, pass, content, contentInput, imageUrl = "";
+        
         if (parentId) {
             author = document.getElementById(`reply-author-${parentId}`).value.trim();
             pass = document.getElementById(`reply-pass-${parentId}`).value.trim();
             contentInput = document.getElementById(`reply-content-${parentId}`);
             content = contentInput.value.trim();
+            imageUrl = replyImages[parentId] || "";
         } else {
             author = document.getElementById('comment-author-input').value.trim();
             pass = document.getElementById('comment-password-input').value.trim();
             contentInput = document.getElementById('comment-input');
             content = contentInput.value.trim();
+            imageUrl = uploadedCommentImageUrl;
         }
+        
         if (!content) return;
+        
         await db.collection('posts').doc(postId).collection('comments').add({
             author: author || dict['anonymous'],
             author_id: userId,
             password: pass,
             content: content,
             parent_id: parentId,
+            image_url: imageUrl,
             likes: [],
             dislikes: [],
             vote_score: 0,
             date_posted: firebase.firestore.Timestamp.now()
         });
-        if (parentId) document.getElementById(`reply-form-container-${parentId}`).style.display = 'none';
-        else {
+        
+        if (parentId) {
+            document.getElementById(`reply-form-container-${parentId}`).style.display = 'none';
+            delete replyImages[parentId];
+        } else {
             document.getElementById('comment-author-input').value = '';
             document.getElementById('comment-password-input').value = '';
             contentInput.value = '';
+            clearCommentUploadedImage();
         }
         loadComments();
     }
@@ -524,17 +684,22 @@
 
             if (!authorized) return;
 
-            // Delete all comments in sub-collection
-            const commentsSnapshot = await docRef.collection('comments').get();
-            const batch = db.batch();
-            commentsSnapshot.forEach(commentDoc => {
-                batch.delete(commentDoc.ref);
-            });
-            await batch.commit();
+            // "삭제하시겠습니까?" Confirmation Step
+            const confirmMsg = dict['post-delete-prompt'];
+            const confirmDelete = await showCyberModal(dict['nav-community'], confirmMsg, false);
+            if (confirmDelete) {
+                // Delete all comments in sub-collection
+                const commentsSnapshot = await docRef.collection('comments').get();
+                const batch = db.batch();
+                commentsSnapshot.forEach(commentDoc => {
+                    batch.delete(commentDoc.ref);
+                });
+                await batch.commit();
 
-            await docRef.delete();
-            alert(dict['delete-success']);
-            location.href = '/board';
+                await docRef.delete();
+                alert(dict['delete-success']);
+                location.href = '/board';
+            }
         } catch (e) {
             alert(dict['delete-error'] + e.message);
         }

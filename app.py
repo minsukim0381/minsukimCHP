@@ -90,6 +90,27 @@ with app.app_context():
         db.session.commit()
 
 # Routes
+import uuid
+
+# File Upload Configuration
+UPLOAD_FOLDER = os.path.join(app.static_folder, 'img', 'uploads')
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+@app.route('/api/upload', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+    if file:
+        ext = os.path.splitext(file.filename)[1]
+        filename = f"{uuid.uuid4().hex}{ext}"
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(filepath)
+        url = f"/static/img/uploads/{filename}"
+        return jsonify({'url': url})
+
 @app.route('/api/posts', methods=['GET'])
 def get_posts():
     category = request.args.get('category')
