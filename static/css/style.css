@@ -38,6 +38,19 @@ body {
     scroll-behavior: smooth;
 }
 
+pre, code {
+    font-family: var(--font-mono);
+}
+
+pre {
+    white-space: pre-wrap;       /* CSS3 */
+    white-space: -moz-pre-wrap;  /* Firefox */
+    white-space: -pre-wrap;      /* Opera <7 */
+    white-space: -o-pre-wrap;    /* Opera >=7 */
+    word-wrap: break-word;       /* IE */
+    overflow-x: auto;
+}
+
 /* --- Layout --- */
 .container {
     width: 100%;
@@ -959,4 +972,47 @@ textarea {
     font-size: 1rem;
     line-height: 1.7;
     color: var(--gray-mid);
+}
+
+/* --- Code Card for Tech Page --- */
+.code-card {
+    padding: 3rem;
+    transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .code-card {
+        padding: 1.5rem !important;
+    }
+}
+
+/* --- Affiliates Grid & Cards --- */
+.affiliate-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 3rem;
+}
+
+.affiliate-card {
+    padding: 3rem;
+    background: var(--gray-light);
+    border-radius: 24px;
+    border: 1px solid var(--border-color);
+    transition: border-color 0.3s, transform 0.3s;
+}
+
+.affiliate-card:hover {
+    border-color: var(--accent-neon-cyan);
+    transform: translateY(-5px);
+}
+
+@media (max-width: 768px) {
+    .affiliate-grid {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
+    }
+    .affiliate-card {
+        padding: 2rem 1.5rem !important;
+        border-radius: 16px !important;
+    }
 }
