@@ -35,6 +35,9 @@
 
         <div id="post-content-body" style="font-size: 1.15rem; line-height: 1.8; margin-bottom: 60px;"></div>
 
+        <!-- AI Draft/Summary Section -->
+        <div id="ai-section" style="margin-bottom: 60px; display: none;"></div>
+
         <!-- Comments Section -->
         <div style="border-top: 1px solid var(--border-color); padding-top: 30px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
@@ -327,6 +330,36 @@
             document.getElementById('loading-spinner').style.display = 'none';
             document.getElementById('post-container').style.display = 'block';
 
+            // Render AI Section
+            const aiSection = document.getElementById('ai-section');
+            if (post.category === 'qna') {
+                aiSection.innerHTML = `
+                    <div class="ai-box ai-qna-box">
+                        <div class="ai-header">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+                            Antigravity AI Draft Response
+                        </div>
+                        <div id="ai-response-content">
+                            <button onclick="generateAIDraft('${post.title.replace(/'/g, "\\'")}')" class="btn-cyber ai-btn">Generate AI Draft</button>
+                        </div>
+                    </div>
+                `;
+                aiSection.style.display = 'block';
+            } else {
+                aiSection.innerHTML = `
+                    <div class="ai-box ai-summary-box">
+                        <div class="ai-header">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                            Antigravity AI Content Summary
+                        </div>
+                        <div id="ai-response-content">
+                            <button onclick="generateAISummary()" class="btn-cyber ai-btn">Summarize Post</button>
+                        </div>
+                    </div>
+                `;
+                aiSection.style.display = 'block';
+            }
+
             // Increment views in background
             docRef.update({
                 views: firebase.firestore.FieldValue.increment(1)
@@ -338,6 +371,43 @@
             console.error("Error loading post:", error);
             const currentLang = localStorage.getItem('preferred_lang') || 'ko';
             document.getElementById('loading-spinner').innerHTML = translations[currentLang]['post-not-found'];
+        }
+    }
+
+    async function generateAIDraft(question) {
+        const contentBox = document.getElementById('ai-response-content');
+        contentBox.innerHTML = '<span style="color:var(--accent-neon-pink); font-family:var(--font-mono); font-size:0.9rem;">[Generating AI response...]</span>';
+        
+        try {
+            const res = await fetch('/api/ai/draft', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question })
+            });
+            const data = await res.json();
+            contentBox.innerHTML = `<div style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.05); padding:1.5rem; border-radius:8px; color:var(--text-color); margin-top:1rem; font-size:0.95rem; white-space:pre-wrap; line-height:1.7;">${data.draft}</div>`;
+        } catch (e) {
+            console.error("AI Draft error:", e);
+            contentBox.innerHTML = '<span style="color:red; font-size:0.9rem;">Error generating AI draft response.</span>';
+        }
+    }
+
+    async function generateAISummary() {
+        const contentBox = document.getElementById('ai-response-content');
+        const postContent = document.getElementById('post-content-body').innerText;
+        contentBox.innerHTML = '<span style="color:var(--accent-neon-cyan); font-family:var(--font-mono); font-size:0.9rem;">[Analyzing post content...]</span>';
+
+        try {
+            const res = await fetch('/api/ai/summarize', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: postContent })
+            });
+            const data = await res.json();
+            contentBox.innerHTML = `<div style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.05); padding:1.5rem; border-radius:8px; color:var(--text-color); margin-top:1rem; font-size:0.95rem; white-space:pre-wrap; line-height:1.7;">${data.summary}</div>`;
+        } catch (e) {
+            console.error("AI Summary error:", e);
+            contentBox.innerHTML = '<span style="color:red; font-size:0.9rem;">Error generating post summary.</span>';
         }
     }
 
@@ -549,42 +619,52 @@
 
             const comment = doc.data();
             const isReply = !!comment.parent_id;
-
-            // Prompt title and content based on comment/reply
-            const promptMsg = isReply ? dict['reply-delete-pass-prompt'] : dict['comment-delete-pass-prompt'];
-
-            const inputPassword = await showCyberModal(dict['nav-community'], promptMsg, true);
-            if (inputPassword === null) return;
-
             let authorized = false;
-            if (inputPassword === masterPass) {
-                if (await showCyberModal(dict['master-approval-title'], dict['master-approval-msg'])) {
+
+            // 1. If comment has NO password, check if current user is author (by userId) or Admin
+            if (!comment.password || comment.password.trim() === "") {
+                if (comment.author_id === userId || comment.author === 'Admin') {
                     authorized = true;
                 } else {
-                    return;
+                    // Not the author, but they might want to use master password override
+                    const promptMsg = isReply ? dict['reply-delete-pass-prompt'] : dict['comment-delete-pass-prompt'];
+                    const inputPassword = await showCyberModal(dict['nav-community'], promptMsg, true);
+                    if (inputPassword === null) return;
+                    
+                    if (inputPassword === masterPass) {
+                        if (await showCyberModal(dict['master-approval-title'], dict['master-approval-msg'])) {
+                            authorized = true;
+                        } else {
+                            return;
+                        }
+                    } else {
+                        alert(dict['delete-fail']);
+                        return;
+                    }
                 }
             } else {
-                if (comment.password && comment.password.trim() !== "") {
-                    if (comment.password === inputPassword) {
+                // 2. Comment HAS a password, prompt for it
+                const promptMsg = isReply ? dict['reply-delete-pass-prompt'] : dict['comment-delete-pass-prompt'];
+                const inputPassword = await showCyberModal(dict['nav-community'], promptMsg, true);
+                if (inputPassword === null) return;
+
+                if (inputPassword === masterPass) {
+                    if (await showCyberModal(dict['master-approval-title'], dict['master-approval-msg'])) {
                         authorized = true;
                     } else {
-                        alert(dict['delete-fail']);
                         return;
                     }
+                } else if (comment.password === inputPassword) {
+                    authorized = true;
                 } else {
-                    if (comment.author_id === userId || comment.author === 'Admin') {
-                        authorized = true;
-                    } else {
-                        alert(dict['delete-fail']);
-                        return;
-                    }
+                    alert(dict['delete-fail']);
+                    return;
                 }
             }
 
             if (authorized) {
                 // "삭제하시겠습니까?" Confirmation Step
                 const confirmMsg = isReply ? dict['reply-delete-prompt'] : dict['comment-delete-prompt'];
-                
                 const confirmDelete = await showCyberModal(dict['nav-community'], confirmMsg, false);
                 if (confirmDelete) {
                     await docRef.delete();

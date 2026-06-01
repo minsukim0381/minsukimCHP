@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Precision Control Robotics는 글로벌 최고 수준의 로봇 하드웨어 및 소프트웨어 기술을 보유한 전문 기업입니다. 인공지능과 초정밀 제어 기술의 융합으로 미래형 자동화 및 스마트 팩토리 표준을 선도합니다.">
     <title>{% block title %}Precision Control Robotics{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
-    
+
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    
+
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyBDJE9CoS_N8fdtqgHYwDMWPGkFuCIj5zo",
@@ -27,21 +29,26 @@
     </script>
     {% block head %}{% endblock %}
 </head>
+
 <body>
     <div class="bg-grid"></div>
     <header>
         <div class="container">
             <nav>
-                <div class="logo" onclick="location.href='/'" style="cursor: pointer;">PRECISION<span>ROBOTICS</span></div>
+                <div class="logo" onclick="location.href='/'" style="cursor: pointer;">PRECISION<span>ROBOTICS</span>
+                </div>
                 <ul class="nav-links">
                     <li><a href="/about" data-i18n="nav-about">회사소개</a></li>
                     <li><a href="/products" data-i18n="nav-products">제품</a></li>
                     <li><a href="/business" data-i18n="nav-business">사업영역</a></li>
+                    <li><a href="/tech" data-i18n="nav-tech">기술지원</a></li>
                     <li><a href="/board" data-i18n="nav-community">커뮤니티</a></li>
                     <li><a href="/affiliates" data-i18n="nav-affiliates">관련회사</a></li>
                 </ul>
                 <div style="display: flex; gap: 1rem; align-items: center;">
-                    <button id="lang-toggle-btn" class="btn-cyber" style="background: transparent; color: var(--text-color); border: 1px solid var(--border-color); font-size: 0.7rem; padding: 0.3rem 0.6rem;" onclick="toggleLanguage()">Eng</button>
+                    <button id="lang-toggle-btn" class="btn-cyber"
+                        style="background: transparent; color: var(--text-color); border: 1px solid var(--border-color); font-size: 0.7rem; padding: 0.3rem 0.6rem;"
+                        onclick="toggleLanguage()">Eng</button>
                     <div class="mobile-menu-toggle" id="mobile-toggle">
                         <span></span>
                         <span></span>
@@ -56,6 +63,7 @@
         <a href="/about" data-i18n="nav-about" onclick="toggleMobileMenu()">회사소개</a>
         <a href="/products" data-i18n="nav-products" onclick="toggleMobileMenu()">제품</a>
         <a href="/business" data-i18n="nav-business" onclick="toggleMobileMenu()">사업영역</a>
+        <a href="/tech" data-i18n="nav-tech" onclick="toggleMobileMenu()">기술지원</a>
         <a href="/board" data-i18n="nav-community" onclick="toggleMobileMenu()">커뮤니티</a>
         <a href="/affiliates" data-i18n="nav-affiliates" onclick="toggleMobileMenu()">관련회사</a>
     </div>
@@ -69,7 +77,9 @@
     </div>
 
     <footer>
-        <div class="container" style="padding: 40px 0; border-top: 1px solid var(--border-color); margin-top: 60px; color: var(--gray-mid); font-size: 0.8rem;" data-i18n="footer-rights">
+        <div class="container"
+            style="padding: 40px 0; border-top: 1px solid var(--border-color); margin-top: 60px; color: var(--gray-mid); font-size: 0.8rem;"
+            data-i18n="footer-rights">
             &copy; 2026 Precision Control Robotics. All rights reserved. Powered by Antigravity.
         </div>
     </footer>
@@ -125,7 +135,7 @@
             const mobileToggle = document.getElementById('mobile-toggle');
             const mobileNav = document.getElementById('mobile-nav');
             mobileNav.classList.toggle('active');
-            
+
             // Hamburger animation
             const spans = mobileToggle.querySelectorAll('span');
             if (mobileNav.classList.contains('active')) {
@@ -141,4 +151,5 @@
     </script>
     {% block scripts %}{% endblock %}
 </body>
+
 </html>

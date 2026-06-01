@@ -433,6 +433,11 @@ nav {
     box-shadow: 0 0 20px var(--accent-neon-cyan);
 }
 
+.btn-cyber:active {
+    transform: translateY(1px) scale(0.98);
+    transition: transform 0.1s ease;
+}
+
 .btn-cyber::before {
     content: '';
     position: absolute;
@@ -878,4 +883,80 @@ textarea {
     color: #000;
     box-shadow: 0 0 25px var(--accent-neon-cyan);
     transform: translateY(-5px);
+}
+
+/* --- Tech Support Page Grid --- */
+.tech-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 4rem;
+}
+
+@media (max-width: 768px) {
+    .tech-grid {
+        grid-template-columns: 1fr !important;
+        gap: 2.5rem !important;
+    }
+}
+
+/* --- Premium Glassmorphic AI Box --- */
+.ai-box {
+    margin-top: 2.5rem;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ai-qna-box {
+    border-left: 4px solid var(--accent-neon-pink);
+    box-shadow: inset 5px 0 15px rgba(255, 0, 255, 0.05);
+}
+
+.ai-qna-box .ai-header {
+    color: var(--accent-neon-pink);
+}
+
+.ai-summary-box {
+    border-left: 4px solid var(--accent-neon-cyan);
+    box-shadow: inset 5px 0 15px rgba(0, 243, 255, 0.05);
+}
+
+.ai-summary-box .ai-header {
+    color: var(--accent-neon-cyan);
+}
+
+.ai-header {
+    font-weight: 800;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.ai-btn {
+    font-size: 0.75rem !important;
+    padding: 0.6rem 1.5rem !important;
+    margin-top: 0.5rem;
+}
+
+.ai-summary-box .ai-btn:hover {
+    box-shadow: 0 0 15px var(--accent-neon-cyan);
+}
+
+.ai-qna-box .ai-btn:hover {
+    background: var(--accent-neon-pink);
+    box-shadow: 0 0 15px var(--accent-neon-pink);
+}
+
+#ai-response-content {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--gray-mid);
 }
