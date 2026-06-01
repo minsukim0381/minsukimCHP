@@ -35,7 +35,7 @@
     <header>
         <div class="container">
             <nav>
-                <div class="logo" onclick="location.href='/'" style="cursor: pointer;">PRECISION<span>ROBOTICS</span>
+                <div class="logo" onclick="location.href='/'" onkeydown="if(event.key==='Enter'||event.key===' '){location.href='/';}" style="cursor: pointer;" role="button" tabindex="0" aria-label="Precision Robotics 홈페이지 이동">PRECISION<span>ROBOTICS</span>
                 </div>
                 <ul class="nav-links">
                     <li><a href="/about" data-i18n="nav-about">회사소개</a></li>

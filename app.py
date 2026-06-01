@@ -98,18 +98,43 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.route('/api/upload', methods=['POST'])
 def upload_file():
+    import base64
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'}), 400
     file = request.files['file']
     if file.filename == '':
         return jsonify({'error': 'No selected file'}), 400
     if file:
-        ext = os.path.splitext(file.filename)[1]
-        filename = f"{uuid.uuid4().hex}{ext}"
-        filepath = os.path.join(UPLOAD_FOLDER, filename)
-        file.save(filepath)
-        url = f"/static/img/uploads/{filename}"
-        return jsonify({'url': url})
+        ext = os.path.splitext(file.filename)[1].lower()
+        
+        # Determine MIME type for base64 fallback
+        mime_types = {
+            '.png': 'image/png',
+            '.jpg': 'image/jpeg',
+            '.jpeg': 'image/jpeg',
+            '.gif': 'image/gif',
+            '.webp': 'image/webp',
+            '.svg': 'image/svg+xml'
+        }
+        mime = mime_types.get(ext, 'application/octet-stream')
+
+        try:
+            # 1. Attempt local file system write (standard for local dev)
+            filename = f"{uuid.uuid4().hex}{ext}"
+            filepath = os.path.join(UPLOAD_FOLDER, filename)
+            file.save(filepath)
+            url = f"/static/img/uploads/{filename}"
+            return jsonify({'url': url})
+        except Exception as e:
+            # 2. Fallback to Base64 (ideal for read-only Vercel serverless containers)
+            try:
+                file.seek(0)
+                file_data = file.read()
+                base64_encoded = base64.b64encode(file_data).decode('utf-8')
+                base64_url = f"data:{mime};base64,{base64_encoded}"
+                return jsonify({'url': base64_url})
+            except Exception as err:
+                return jsonify({'error': f"Upload failed: {str(err)}"}), 500
 
 @app.route('/api/posts', methods=['GET'])
 def get_posts():

@@ -9,14 +9,12 @@
         <button class="btn-cyber" data-i18n="btn-write" onclick="location.href='/write'">글쓰기</button>
     </div>
 
-    <div class="category-tabs">
-        <a href="javascript:void(0)" onclick="loadPosts('')" class="tab active" id="tab-all" data-i18n="tab-all">전체</a>
-        <a href="javascript:void(0)" onclick="loadPosts('news')" class="tab" id="tab-news" data-i18n="tab-news">뉴스</a>
-        <a href="javascript:void(0)" onclick="loadPosts('notice')" class="tab" id="tab-notice"
-            data-i18n="tab-notice">공지사항</a>
-        <a href="javascript:void(0)" onclick="loadPosts('tech')" class="tab" id="tab-tech"
-            data-i18n="tab-tech">기술블로그</a>
-        <a href="javascript:void(0)" onclick="loadPosts('qna')" class="tab" id="tab-qna" data-i18n="tab-qna">Q&A</a>
+    <div class="category-tabs" role="tablist" aria-label="게시글 카테고리">
+        <a href="javascript:void(0)" onclick="loadPosts('')" onkeydown="if(event.key==='Enter'||event.key===' '){loadPosts(''); event.preventDefault();}" class="tab active" id="tab-all" data-i18n="tab-all" role="tab" aria-selected="true" tabindex="0">전체</a>
+        <a href="javascript:void(0)" onclick="loadPosts('news')" onkeydown="if(event.key==='Enter'||event.key===' '){loadPosts('news'); event.preventDefault();}" class="tab" id="tab-news" data-i18n="tab-news" role="tab" aria-selected="false" tabindex="0">뉴스</a>
+        <a href="javascript:void(0)" onclick="loadPosts('notice')" onkeydown="if(event.key==='Enter'||event.key===' '){loadPosts('notice'); event.preventDefault();}" class="tab" id="tab-notice" data-i18n="tab-notice" role="tab" aria-selected="false" tabindex="0">공지사항</a>
+        <a href="javascript:void(0)" onclick="loadPosts('tech')" onkeydown="if(event.key==='Enter'||event.key===' '){loadPosts('tech'); event.preventDefault();}" class="tab" id="tab-tech" data-i18n="tab-tech" role="tab" aria-selected="false" tabindex="0">기술블로그</a>
+        <a href="javascript:void(0)" onclick="loadPosts('qna')" onkeydown="if(event.key==='Enter'||event.key===' '){loadPosts('qna'); event.preventDefault();}" class="tab" id="tab-qna" data-i18n="tab-qna" role="tab" aria-selected="false" tabindex="0">Q&A</a>
     </div>
 
     <div
@@ -158,9 +156,15 @@
         postsBody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 2rem;">${dict['loading']}</td></tr>`;
 
         // Update active tab
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        if (!currentCategory) document.getElementById('tab-all').classList.add('active');
-        else document.getElementById('tab-' + currentCategory).classList.add('active');
+        document.querySelectorAll('.tab').forEach(t => {
+            t.classList.remove('active');
+            t.setAttribute('aria-selected', 'false');
+        });
+        const activeTab = !currentCategory ? document.getElementById('tab-all') : document.getElementById('tab-' + currentCategory);
+        if (activeTab) {
+            activeTab.classList.add('active');
+            activeTab.setAttribute('aria-selected', 'true');
+        }
 
         try {
             // First check and seed if empty
