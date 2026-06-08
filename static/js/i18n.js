@@ -151,6 +151,10 @@ const translations = {
         "search-type-comment": "댓글 내용",
         "search-placeholder": "검색어를 입력하세요",
         "btn-search": "검색",
+        "comment-score": "추천수",
+        "btn-delete-comment": "삭제",
+        "ai-summary-title": "Antigravity AI 본문 요약",
+        "btn-summarize": "AI 요약 생성",
         "lang-toggle": "Eng"
     },
     en: {
@@ -305,6 +309,10 @@ const translations = {
         "search-type-comment": "Comment Content",
         "search-placeholder": "Enter search keyword",
         "btn-search": "Search",
+        "comment-score": "Score",
+        "btn-delete-comment": "DELETE",
+        "ai-summary-title": "Antigravity AI Content Summary",
+        "btn-summarize": "Summarize Post",
         "lang-toggle": "Kor"
     }
 };
@@ -335,6 +343,17 @@ function applyTranslations() {
     const toggleBtn = document.getElementById('lang-toggle-btn');
     if (toggleBtn) {
         toggleBtn.innerText = dict['lang-toggle'];
+    }
+
+    // Trigger dynamic content updates if functions exist
+    if (typeof loadPosts === 'function') {
+        loadPosts();
+    }
+    if (typeof loadPostDetail === 'function') {
+        loadPostDetail();
+    }
+    if (typeof loadLatestNews === 'function') {
+        loadLatestNews();
     }
 }
 

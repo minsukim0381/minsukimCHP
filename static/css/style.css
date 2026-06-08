@@ -518,30 +518,16 @@ nav {
 
 .post-row {
     border-bottom: 1px solid var(--border-color);
-    transition: transform 0.2s;
     cursor: pointer;
-    position: relative;
 }
 
-.post-row:hover {
-    background: rgba(255, 255, 255, 0.03);
+.post-row td {
+    transition: background-color 0.3s ease, border-bottom-color 0.3s ease;
 }
 
-/* Cyberpunk Neon Hover Line */
-.post-row::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: var(--accent-neon-cyan);
-    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 0 10px var(--accent-neon-cyan);
-}
-
-.post-row:hover::after {
-    width: 100%;
+.post-row:hover td {
+    background: rgba(0, 243, 255, 0.03);
+    border-bottom: 1px solid var(--accent-neon-cyan);
 }
 
 .post-row td {
@@ -651,11 +637,12 @@ textarea:focus,
 select:focus {
     outline: none;
     border-color: var(--accent-neon-cyan);
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.25);
 }
 
 input[type="text"]::placeholder,
 textarea::placeholder {
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.65);
 }
 
 textarea {
@@ -924,14 +911,7 @@ textarea {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.ai-qna-box {
-    border-left: 4px solid var(--accent-neon-pink);
-    box-shadow: inset 5px 0 15px rgba(255, 0, 255, 0.05);
-}
 
-.ai-qna-box .ai-header {
-    color: var(--accent-neon-pink);
-}
 
 .ai-summary-box {
     border-left: 4px solid var(--accent-neon-cyan);
@@ -963,10 +943,7 @@ textarea {
     box-shadow: 0 0 15px var(--accent-neon-cyan);
 }
 
-.ai-qna-box .ai-btn:hover {
-    background: var(--accent-neon-pink);
-    box-shadow: 0 0 15px var(--accent-neon-pink);
-}
+
 
 #ai-response-content {
     font-size: 1rem;
@@ -1015,4 +992,15 @@ textarea {
         padding: 2rem 1.5rem !important;
         border-radius: 16px !important;
     }
+}
+
+/* Lang Toggle Button Micro-interaction */
+#lang-toggle-btn {
+    transition: all var(--transition-speed) ease !important;
+}
+
+#lang-toggle-btn:hover {
+    border-color: var(--accent-neon-cyan) !important;
+    color: var(--accent-neon-cyan) !important;
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.25);
 }

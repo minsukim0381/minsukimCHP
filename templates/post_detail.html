@@ -9,7 +9,7 @@
         <button id="delete-btn" class="btn-cyber" style="background: transparent; border: 1px solid #ff4d4d; color: #ff4d4d; padding: 0.5rem 1rem; font-size: 0.8rem;" data-i18n="btn-delete" onclick="deletePost()">게시글 삭제</button>
     </div>
     
-    <div id="loading-spinner" style="text-align: center; padding: 4rem;">Loading post...</div>
+    <div id="loading-spinner" style="text-align: center; padding: 4rem;" data-i18n="loading">Loading post...</div>
     
     <div id="post-container" style="display: none;">
         <h1 id="post-title" class="responsive-title" style="font-size: 3rem; font-weight: 800; margin-bottom: 1.5rem;"></h1>
@@ -20,7 +20,7 @@
                 <span>|</span>
                 <span id="post-date"></span>
                 <span>|</span>
-                <span>Views: <span id="post-views"></span></span>
+                <span><span data-i18n="table-views">Views</span>: <span id="post-views"></span></span>
             </div>
             
             <div style="display: flex; gap: 1rem;">
@@ -332,32 +332,21 @@
 
             // Render AI Section
             const aiSection = document.getElementById('ai-section');
-            if (post.category === 'qna') {
+            if (post.category !== 'qna') {
                 aiSection.innerHTML = `
-                    <div class="ai-box ai-qna-box">
-                        <div class="ai-header">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
-                            Antigravity AI Draft Response
+                    <div class="ai-box ai-summary-box">
+                        <div class="ai-header" data-i18n="ai-summary-title">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                            ${dict['ai-summary-title'] || 'Antigravity AI Content Summary'}
                         </div>
                         <div id="ai-response-content">
-                            <button onclick="generateAIDraft('${post.title.replace(/'/g, "\\'")}')" class="btn-cyber ai-btn">Generate AI Draft</button>
+                            <button onclick="generateAISummary()" class="btn-cyber ai-btn" data-i18n="btn-summarize">${dict['btn-summarize'] || 'Summarize Post'}</button>
                         </div>
                     </div>
                 `;
                 aiSection.style.display = 'block';
             } else {
-                aiSection.innerHTML = `
-                    <div class="ai-box ai-summary-box">
-                        <div class="ai-header">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
-                            Antigravity AI Content Summary
-                        </div>
-                        <div id="ai-response-content">
-                            <button onclick="generateAISummary()" class="btn-cyber ai-btn">Summarize Post</button>
-                        </div>
-                    </div>
-                `;
-                aiSection.style.display = 'block';
+                aiSection.style.display = 'none';
             }
 
             // Increment views in background
@@ -371,24 +360,6 @@
             console.error("Error loading post:", error);
             const currentLang = localStorage.getItem('preferred_lang') || 'ko';
             document.getElementById('loading-spinner').innerHTML = translations[currentLang]['post-not-found'];
-        }
-    }
-
-    async function generateAIDraft(question) {
-        const contentBox = document.getElementById('ai-response-content');
-        contentBox.innerHTML = '<span style="color:var(--accent-neon-pink); font-family:var(--font-mono); font-size:0.9rem;">[Generating AI response...]</span>';
-        
-        try {
-            const res = await fetch('/api/ai/draft', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ question })
-            });
-            const data = await res.json();
-            contentBox.innerHTML = `<div style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.05); padding:1.5rem; border-radius:8px; color:var(--text-color); margin-top:1rem; font-size:0.95rem; white-space:pre-wrap; line-height:1.7;">${data.draft}</div>`;
-        } catch (e) {
-            console.error("AI Draft error:", e);
-            contentBox.innerHTML = '<span style="color:red; font-size:0.9rem;">Error generating AI draft response.</span>';
         }
     }
 
@@ -516,7 +487,7 @@
                 </div>
                 <div style="display: flex; gap: 1rem; align-items: center;">
                     ${!isReply ? `<button class="reply-comment-btn" data-id="${c.id}" style="background:none; border:none; color:var(--accent-neon-cyan); cursor:pointer; font-size:0.75rem; font-weight:700; text-transform:uppercase; padding: 0.5rem 0;">${dict['btn-reply']}</button>` : ''}
-                    <button class="delete-comment-btn" data-id="${c.id}" style="background:none; border:none; color:rgba(255, 255, 255, 0.4); cursor:pointer; font-size:0.75rem; font-weight:600; padding: 0.5rem 0;">DELETE</button>
+                    <button class="delete-comment-btn" data-id="${c.id}" style="background:none; border:none; color:rgba(255, 255, 255, 0.4); cursor:pointer; font-size:0.75rem; font-weight:600; padding: 0.5rem 0;">${dict['btn-delete-comment'] || 'DELETE'}</button>
                 </div>
             </div>
             <p style="margin: 0 0 1rem 0; color: var(--gray-mid); font-size: ${isReply ? '0.9rem' : '1rem'}; line-height: 1.5; white-space: pre-wrap; word-break: break-word;">${c.content}</p>
@@ -532,7 +503,7 @@
                 <button class="comment-vote-btn ${isDisliked ? 'active-dislike' : ''}" data-id="${c.id}" data-type="dislike" style="font-size: 0.75rem;">
                     👎 <span>${dislikes.length}</span>
                 </button>
-                <span style="font-size: 0.65rem; color: var(--gray-mid); font-weight: 700; text-transform: uppercase; opacity: 0.6;">Score: ${score}</span>
+                <span style="font-size: 0.65rem; color: var(--gray-mid); font-weight: 700; text-transform: uppercase; opacity: 0.6;">${dict['comment-score'] || 'Score'}: ${score}</span>
             </div>
             <div id="reply-form-container-${c.id}" style="margin-top: 1rem; display: none; width: 100%;"></div>
         `;

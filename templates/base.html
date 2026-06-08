@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Precision Control Robotics는 글로벌 최고 수준의 로봇 하드웨어 및 소프트웨어 기술을 보유한 전문 기업입니다. 인공지능과 초정밀 제어 기술의 융합으로 미래형 자동화 및 스마트 팩토리 표준을 선도합니다.">
     <title>{% block title %}Precision Control Robotics{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" as="style">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
@@ -125,7 +129,9 @@
             // Navigation Active State Highlight
             const currentPath = window.location.pathname;
             document.querySelectorAll('.nav-links a, #mobile-nav a').forEach(link => {
-                if (link.getAttribute('href') === currentPath) {
+                const href = link.getAttribute('href');
+                if (href === currentPath || 
+                    (href === '/board' && (currentPath.startsWith('/post/') || currentPath === '/write'))) {
                     link.classList.add('active');
                 }
             });

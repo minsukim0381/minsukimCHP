@@ -197,19 +197,7 @@ def delete_post(id):
     db.session.commit()
     return '', 204
 
-@app.route('/api/ai/draft', methods=['POST'])
-def generate_draft():
-    data = request.json
-    question = data.get('question', '')
-    
-    # Mocking AI draft generation based on "tech documentation"
-    # In a real scenario, this would query a vector DB or search internal docs
-    draft = f"안녕하세요, Antigravity 기술지원 에이전트입니다. 문의하신 '{question}'에 대한 답변 초안입니다:\n\n"
-    draft += "제시해주신 내용으로 볼 때, 당사의 Python API v2.0 매뉴얼 14페이지의 제어 모듈 스펙을 참고하시면 도움이 될 것 같습니다. "
-    draft += "구체적으로는 'set_motion_profile()' 함수를 사용하여 가감속도를 조절해 보시기 바랍니다.\n\n"
-    draft += "추가적인 도움이 필요하시면 언제든 말씀해 주세요."
-    
-    return jsonify({'draft': draft})
+
 
 @app.route('/api/ai/summarize', methods=['POST'])
 def summarize_post():

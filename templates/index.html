@@ -2,6 +2,10 @@
 
 {% block title %}Precision Control Robotics | 홈{% endblock %}
 
+{% block head %}
+<link rel="preload" href="/static/img/hero_new.png" as="image" fetchpriority="high">
+{% endblock %}
+
 {% block content %}
 <section class="hero-full" style="background-image: url('/static/img/hero_new.png');">
     <div class="hero-overlay">
@@ -27,15 +31,15 @@
     <div class="container">
         <h2 class="section-title" data-i18n="nav-business" style="text-align: left; margin-bottom: 3rem;">사업영역</h2>
         <div class="business-grid">
-            <div class="business-card" onclick="location.href='/business'">
-                <img src="/static/img/business_automation.png" alt="Industrial Automation">
+            <div class="business-card" tabindex="0" role="link" onclick="location.href='/business'" onkeydown="if(event.key==='Enter'||event.key===' '){location.href='/business';}">
+                <img src="/static/img/business_automation.png" alt="Industrial Automation" loading="lazy">
                 <div class="business-content">
                     <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;" data-i18n="business-area-1-home-t">Industrial Automation</h3>
                     <p style="font-size: 0.9rem; opacity: 0.8;" data-i18n="business-area-1-home-d">Advanced 6-axis joint control systems for high-precision manufacturing.</p>
                 </div>
             </div>
-            <div class="business-card" onclick="location.href='/business'">
-                <img src="/static/img/business_ai.png" alt="Smart Factory AI">
+            <div class="business-card" tabindex="0" role="link" onclick="location.href='/business'" onkeydown="if(event.key==='Enter'||event.key===' '){location.href='/business';}">
+                <img src="/static/img/business_ai.png" alt="Smart Factory AI" loading="lazy">
                 <div class="business-content">
                     <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;" data-i18n="business-area-2-home-t">Smart Factory AI</h3>
                     <p style="font-size: 0.9rem; opacity: 0.8;" data-i18n="business-area-2-home-d">Integrating deep learning with robotic systems for adaptive production.</p>
@@ -53,7 +57,7 @@
         </div>
         <div class="feature-row">
             <div class="feature-image">
-                <img src="/static/img/products_main.png" alt="Product 1">
+                <img src="/static/img/products_main.png" alt="Product 1" loading="lazy">
             </div>
             <div>
                 <h3 style="font-size: clamp(1.8rem, 5vw, 2.8rem); font-weight: 800; margin-bottom: 1.5rem; letter-spacing: -1px;">RB Series</h3>
@@ -207,7 +211,7 @@
             posts.slice(0, 3).forEach(item => {
                 const date = item.date_posted.toDate().toLocaleDateString(currentLang === 'ko' ? 'ko-KR' : 'en-US');
                 grid.innerHTML += `
-                    <div class="news-item" onclick="location.href='/post/${item.id}'">
+                    <div class="news-item" tabindex="0" role="link" onclick="location.href='/post/${item.id}'" onkeydown="if(event.key==='Enter'||event.key===' '){location.href='/post/${item.id}'; event.preventDefault();}">
                         <div class="news-date">${date}</div>
                         <div class="news-title">${item.title}</div>
                     </div>
